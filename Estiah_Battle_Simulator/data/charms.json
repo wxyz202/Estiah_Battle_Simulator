@@ -1,0 +1,26 @@
+{
+    "102": {
+        "id": "102", 
+        "is_attachment": false, 
+        "lines": [
+            {
+                "effects": [
+                    {
+                        "effect": {
+                            "effect_type": "Melee", 
+                            "params": {
+                                "damage": 5, 
+                                "p": 20
+                            }
+                        }, 
+                        "target": "Enimy"
+                    }
+                ], 
+                "line_type": "Effect"
+            }
+        ], 
+        "name": "Wooden Sword", 
+        "rune_type1": "Sword", 
+        "rune_type2": "Null"
+    }
+}
