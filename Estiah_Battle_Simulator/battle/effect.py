@@ -4,11 +4,28 @@ from common.alltype import EffectType
 class Effect(object):
 	@staticmethod
 	def fromJsonObj(obj):
-		effect_type = getattr(EffectType, obj['effect_type'])
-		if effect_type == EffectType.Melee:
-			return Melee.fromJsonObj(obj['params'])
-		else:
-			assert False
+		effect_type = obj['effect_type']
+		params = obj['params']
+		return globals()[effect_type].fromJsonObj(params)
+
+
+def damagedecorator(cls):
+	def __init__(self, damage, p=0):
+		super(cls, self).__init__(damage, p)
+
+	def toJsonObj(self):
+		return {'effect_type': cls.__name__, 'params': {'damage': self.damage, 'p': self.p}}
+
+	@staticmethod
+	def fromJsonObj(obj):
+		damage = obj['damage']
+		p = obj['p']
+		return cls(damage, p)
+
+	cls.__init__ = __init__
+	cls.toJsonObj = toJsonObj
+	cls.fromJsonObj = fromJsonObj
+	return cls
 
 class Damage(Effect):
 	def __init__(self, damage, p):
@@ -33,11 +50,8 @@ class Damage(Effect):
 		else:
 			return damage-defense + defense*p/100, 0
 
-
+@damagedecorator
 class Melee(Damage):
-	def __init__(self, damage, p):
-		super(Melee, self).__init__(damage, p)
-
 	def run(self, subject, target, is_EA, is_attachment, AOE_players=None):
 		if is_attachment:
 			melee, melee_p = self.calDamage(0, 0, is_EA, AOE_players)
@@ -49,20 +63,8 @@ class Melee(Damage):
 		target.reduceHp(melee)
 		return
 
-	def toJsonObj(self):
-		return {'effect_type': EffectType.reverse(EffectType.Melee), 'params': {'damage': self.damage, 'p': self.p}}
-
-	@staticmethod
-	def fromJsonObj(obj):
-		damage = obj['damage']
-		p = obj['p']
-		return Melee(damage, p)
-		
-
+@damagedecorator
 class MeleeDrain(Melee):
-	def __init__(self, damage, p):
-		super(MeleeDrain, self).__init__(damage, p)
-
 	def run(self, subject, target, is_EA, is_attachment, AOE_players=None):
 		if is_attachment:
 			melee, melee_p = self.calDamage(0, 0, is_EA, AOE_players)
@@ -78,10 +80,8 @@ class MeleeDrain(Melee):
 			subject.increaseHp(melee)
 		return
 
+@damagedecorator
 class Magic(Damage):
-	def __init__(self, damage, p):
-		super(Magic, self).__init__(damage, p)
-
 	def run(self, subject, target, is_EA, is_attachment, AOE_players=None):
 		if is_attachment:
 			magic, magic_p = self.calDamage(0, 0, is_EA, AOE_players)
@@ -93,10 +93,8 @@ class Magic(Damage):
 		target.reduceHp(magic)
 		return
 
+@damagedecorator
 class MagicDrain(Magic):
-	def __init__(self, damage, p):
-		super(MagicDrain, self).__init__(damage, p)
-
 	def run(self, subject, target, is_EA, is_attachment, AOE_players=None):
 		if is_attachment:
 			magic, magic_p = self.calDamage(0, 0, is_EA, AOE_players)
@@ -112,10 +110,8 @@ class MagicDrain(Magic):
 			subject.increaseHp(magic)
 		return
 
+@damagedecorator
 class ShiftingDamage(Damage):
-	def __init__(self, damage, p):
-		super(ShiftingDamage, self).__init__(damage, p)
-
 	def run(self, subject, target, is_EA, is_attachment, AOE_players=None):
 		if is_attachment:
 			melee, melee_p = self.calDamage(0, 0, is_EA, AOE_players)
@@ -135,10 +131,8 @@ class ShiftingDamage(Damage):
 			target.reduceHp(magic)
 		return
 
+@damagedecorator
 class Spirit(Damage):
-	def __init__(self, damage):
-		super(Spirit, self).__init__(damage, 0)
-
 	def run(self, subject, target, is_EA, is_attachment, AOE_players=None):
 		if is_attachment:
 			spirit, spirit_p = self.calDamage(0, 0, is_EA, AOE_players)
@@ -151,48 +145,57 @@ class Spirit(Damage):
 		return
 
 
+def defensedecorator(cls):
+	def __init__(self, defense, is_cumul):
+		super(cls, self).__init__(defense, is_cumul)
+
+	def toJsonObj(self):
+		return {'effect_type': cls.__name__, 'params': {'defense': self.defense, 'is_cumul': self.is_cumul}}
+
+	@staticmethod
+	def fromJsonObj(obj):
+		defense = obj['defense']
+		is_cumul = obj['is_cumul']
+		return cls(defense, is_cumul)
+
+	cls.__init__ = __init__
+	cls.toJsonObj = toJsonObj
+	cls.fromJsonObj = fromJsonObj
+	return cls
+
 class Defense(Effect):
 	def __init__(self, defense, is_cumul):
 		self.defense = defense
 		self.is_cumul = is_cumul
 
-	def calDef(self, old_defense):
+	def calDefense(self, old_defense):
 		if self.is_cumul:
 			return old_defense + self.defense
 		else:
 			return max(old_defense, self.defense)
 
-
+@defensedecorator
 class Armor(Defense):
-	def __init__(self, defense, is_cumul):
-		super(Armor, self).__init__(defense, is_cumul)
-
 	def run(self, subject, target, is_EA, is_attachment, AOE_players=None):
-		target.Armor = self.calDef(target.Armor)
+		target.Armor = self.calDefense(target.Armor)
 
+@defensedecorator
 class Ward(Defense):
-	def __init__(self, defense, is_cumul):
-		super(Ward, self).__init__(defense, is_cumul)
-
 	def run(self, subject, target, is_EA, is_attachment, AOE_players=None):
-		target.Ward = self.calDef(target.Ward)
+		target.Ward = self.calDefense(target.Ward)
 
+@defensedecorator
 class ShiftingDefense(Defense):
-	def __init__(self, defense, is_cumul):
-		super(ShiftingDefense, self).__init__(defense, is_cumul)
-
 	def run(self, subject, target, is_EA, is_attachment, AOE_players=None):
 		if armor < ward:
-			armor = self.calDef(target.Armor)
+			armor = self.calDefense(target.Armor)
 		else:
-			ward = self.calDef(target.Ward)
+			ward = self.calDefense(target.Ward)
 
+@defensedecorator
 class Willpower(Defense):
-	def __init__(self, defense, is_cumul):
-		super(Willpower, self).__init__(defense, is_cumul)
-
 	def run(self, subject, target, is_EA, is_attachment, AOE_players=None):
-		target.Willpower = self.calDef(target.Willpower)
+		target.Willpower = self.calDefense(target.Willpower)
 
 
 class Projection(Effect):
@@ -216,6 +219,16 @@ class Projection(Effect):
 		effect_obj.run(subject, target, is_EA=False, is_attachment=True, AOE_players=None)
 		return
 
+	def toJsonObj(self):
+		return {'effect_type': 'Projection', 'params': {'max_damage': self.max_damage, 'damage_type': EffectType.reverse(damage_type), 'defense_type': EffectType.reverse(defense_type)}}
+
+	@staticmethod
+	def fromJsonObj(obj):
+		max_damage = obj['max_damage']
+		damage_type = getattr(EffectType,obj['damage_type'])
+		defense_type = getattr(EffectType,obj['defense_type'])
+		return Projection(max_damage, damage_type, defense_type)
+
 class Heal(Effect):
 	def __init__(self, life):
 		self.life = life
@@ -223,6 +236,14 @@ class Heal(Effect):
 	def run(self, subject, target, is_EA, is_attachment, AOE_players=None):
 		target.increaseHp(self.life)
 		return
+
+	def toJsonObj(self):
+		return {'effect_type': 'Heal', 'params': {'life': self.life}}
+
+	@staticmethod
+	def fromJsonObj(obj):
+		life = obj['life']
+		return Heal(life)
 
 class LifeLose(Effect):
 	def __init__(self, life):
@@ -232,28 +253,55 @@ class LifeLose(Effect):
 		target.reduceHp(self.life)
 		return
 
+	def toJsonObj(self):
+		return {'effect_type': 'LifeLose', 'params': {'life': self.life}}
+
+	@staticmethod
+	def fromJsonObj(obj):
+		life = obj['life']
+		return LifeLose(life)
+
+
+def defensedestroydecorator(cls):
+	def __init__(self, defense):
+		super(cls, self).__init__(defense)
+
+	def toJsonObj(self):
+		return {'effect_type': cls.__name__, 'params': {'defense': self.defense}}
+
+	@staticmethod
+	def fromJsonObj(obj):
+		defense = obj['defense']
+		return cls(defense)
+
+	cls.__init__ = __init__
+	cls.toJsonObj = toJsonObj
+	cls.fromJsonObj = fromJsonObj
+	return cls
+
+class DefenseDestroy(Effect):
+	def __init__(self, defense):
+		self.defense = defense
+
+	def calDefense(old_defense):
+		return max(old_defense - self.defense, 0)
+
+@defensedestroydecorator
 class ArmorDestroy(Effect):
-	def __init__(self, armor):
-		self.armor = armor
-
 	def run(self, subject, target, is_EA, is_attachment, AOE_players=None):
-		target.Armor = max(target.Armor - self.armor, 0)
+		target.Armor = self.calDefense(target.Armor)
 		return
 
+@defensedestroydecorator
 class WardDestroy(Effect):
-	def __init__(self, ward):
-		self.ward = ward
-
 	def run(self, subject, target, is_EA, is_attachment, AOE_players=None):
-		target.Ward = max(target.Ward - self.ward, 0)
+		target.Ward = self.calDefense(target.Ward)
 		return
 
+@defensedestroydecorator
 class WillpowerDestroy(Effect):
-	def __init__(self, willpower):
-		self.willpower = willpower
-
 	def run(self, subject, target, is_EA, is_attachment, AOE_players=None):
-		target.Willpower = max(target.Willpower - self.willpower, 0)
+		target.Willpower = self.calDefense(target.Willpower)
 		return
 
 class ExtraAction(Effect):
@@ -273,6 +321,15 @@ class FocusOrProtect(Effect):
 			target.is_being_target_turn = max(target.is_being_target_turn, self.turn)
 		return
 
+	def toJsonObj(self):
+		return {'effect_type': 'FocusOrProtect', 'params': {'turn': self.turn, 'is_cumul': self.is_cumul}}
+
+	@staticmethod
+	def fromJsonObj(obj):
+		turn = obj['turn']
+		is_cumul = obj['is_cumul']
+		return FocusOrProtect(turn, is_cumul)
+
 class Stun(Effect):
 	def __init__(self, turn):
 		self.turn = turn
@@ -281,37 +338,60 @@ class Stun(Effect):
 		target.stun_turn = max(target.stun_turn, self.turn)
 		return
 
-class NextMelee(Effect):
-	def __init__(self, PB):
-		self.PB = PB
+	def toJsonObj(self):
+		return {'effect_type': 'Stun', 'params': {'turn': self.turn}}
 
+	@staticmethod
+	def fromJsonObj(obj):
+		turn = obj['turn']
+		return Stun(turn)
+
+
+def boosterdecorator(cls):
+	def __init__(self, boost):
+		super(cls, self).__init__(boost)
+
+	def toJsonObj(self):
+		return {'effect_type': cls.__name__, 'params': {'boost': self.boost}}
+
+	@staticmethod
+	def fromJsonObj(obj):
+		boost = obj['boost']
+		return cls(boost)
+
+	cls.__init__ = __init__
+	cls.toJsonObj = toJsonObj
+	cls.fromJsonObj = fromJsonObj
+	return cls
+
+class Booster(Effect):
+	def __init__(self, boost):
+		self.boost = boost
+
+@boosterdecorator
+class NextMelee(Booster):
 	def run(self, subject, target, is_EA, is_attachment, AOE_players=None):
-		target.Melee_NPB += self.PB
+		target.Melee_NPB += self.boost
 		return
 
-class NextMagic(Effect):
-	def __init__(self, PB):
-		self.PB = PB
-
+@boosterdecorator
+class NextMagic(Booster):
 	def run(self, subject, target, is_EA, is_attachment, AOE_players=None):
-		target.Magic_NPB += self.PB
+		target.Magic_NPB += self.boost
 		return
 
-class OngoingMelee(Effect):
-	def __init__(self, PB):
-		self.PB = PB
-
+@boosterdecorator
+class OngoingMelee(Booster):
 	def run(self, subject, target, is_EA, is_attachment, AOE_players=None):
-		target.Melee_CPB += self.PB
+		target.Melee_CPB += self.boost
 		return
 
-class OngoingMagic(Effect):
-	def __init__(self, PB):
-		self.PB = PB
-
+@boosterdecorator
+class OngoingMagic(Booster):
 	def run(self, subject, target, is_EA, is_attachment, AOE_players=None):
-		target.Magic_CPB += self.PB
+		target.Magic_CPB += self.boost
 		return
+
 
 class Cleanse(Effect):
 	def __init__(self):
@@ -321,6 +401,13 @@ class Cleanse(Effect):
 		target.cleanse()
 		return
 
+	def toJsonObj(self):
+		return {'effect_type': 'Cleanse', 'params': {}}
+
+	@staticmethod
+	def fromJsonObj(obj):
+		return Cleanse()
+
 class Purge(Effect):
 	def __init__(self):
 		pass
@@ -328,6 +415,13 @@ class Purge(Effect):
 	def run(self, subject, target, is_EA, is_attachment, AOE_players=None):
 		target.purge()
 		return
+
+	def toJsonObj(self):
+		return {'effect_type': 'Purge', 'params': {}}
+
+	@staticmethod
+	def fromJsonObj(obj):
+		return Purge()
 
 class Normalize(Effect):
 	def __init__(self):
@@ -337,78 +431,93 @@ class Normalize(Effect):
 		target.normalize()
 		return
 
+	def toJsonObj(self):
+		return {'effect_type': 'Normalize', 'params': {}}
 
-class Aura(Effect):
-	def __init__(self, turn, arua_type, attach_charm):
+	@staticmethod
+	def fromJsonObj(obj):
+		return Normalize()
+
+
+def longtimeeffectdecorator(cls):
+	def __init__(self, turn, long_time_type, attach_charm):
+		super(cls, self).__init__(turn, long_time_type, attach_charm)
+
+	def toJsonObj(self):
+		return {'effect_type': cls.__name__, 'params': {'turn': self.turn, 'long_time_type': EffectType.reverse(self.long_time_type), 'attach_charm': self.attach_charm.id}}
+
+	@staticmethod
+	def fromJsonObj(obj):
+		turn = obj['turn']
+		long_time_type = getattr(EffectType,obj['long_time_type'])
+		attach_charm = Charm.loadFromId(obj['attach_charm'])
+		return cls(turn, long_time_type, attach_charm)
+
+	cls.__init__ = __init__
+	cls.toJsonObj = toJsonObj
+	cls.fromJsonObj = fromJsonObj
+	return cls
+
+class LongTimeEffect(Effect):
+	def __init__(self, turn, long_time_type, attach_charm):
 		self.turn = turn
-		self.aura_type = aura_type
+		self.long_time_type = long_time_type
 		self.attach_charm = attach_charm
 
+@longtimeeffectdecorator
+class Aura(LongTimeEffect):
 	def run(self, subject, allies, enimies, is_EA):
 		if is_EA:
 			pass
 		else:
-			if self.aura_type == EffectType.Effect_After:
+			if self.long_time_type == EffectType.Effect_After:
 				if self.turn == 1:
 					self.attach_charm.run(subject, allies, enimies)
 				self.turn -= 1
-			elif self.aura_type == EffectType.Effect_Duration:
+			elif self.long_time_type == EffectType.Effect_Duration:
 				self.attach_charm.run(subject, allies, enimies)
 				self.turn -= 1
 			else:
 				assert False
 
-
-class Bane(Effect):
-	def __init__(self, turn, bane_type, attach_charm):
-		self.turn = turn
-		self.bane_type = bane_type
-		self.attach_charm = attach_charm
-
+@longtimeeffectdecorator
+class Bane(LongTimeEffect):
 	def run(self, subject, allies, enimies, is_EA):
-		if self.bane_type == EffectType.Effect_After:
+		if self.long_time_type == EffectType.Effect_After:
 			if self.turn == 1:
 				self.attach_charm.run(subject, allies, enimies)
 			self.turn -= 1
-		elif self.bane_type == EffectType.Effect_Duration:
+		elif self.long_time_type == EffectType.Effect_Duration:
 			self.attach_charm.run(subject, allies, enimies)
 			if not is_EA:
 				self.turn -= 1
 		else:
 			assert False
 
-
-class Curse(Effect):
-	def __init__(self, turn, attach_charm):
-		self.turn = turn
-		self.attach_charm = attach_charm
-
+@longtimeeffectdecorator
+class Curse(LongTimeEffect):
 	def run(self, subject, allies, enimies, is_EA):
-		if self.curse_type == EffectType.Effect_After:
+		if self.long_time_type == EffectType.Effect_After:
 			if self.turn == 1:
 				self.attach_charm.run(subject, allies, enimies)
 			self.turn -= 1
-		elif self.curse_type == EffectType.Effect_Duration:
+		elif self.long_time_type == EffectType.Effect_Duration:
 			self.attach_charm.run(subject, allies, enimies)
 			self.turn -= 1
 		else:
 			assert False
 
-
-class Summon(Effect):
-	def __init__(self, turn, attach_charm):
-		self.turn = turn
-		self.attach_charm = attach_charm
-
+@longtimeeffectdecorator
+class Summon(LongTimeEffect):
 	def run(self, subject, allies, enimies, is_EA):
 		if is_EA:
 			pass
 		else:
-			if self.summon_type == EffectType.Effect_After:
+			if self.long_time_type == EffectType.Effect_After:
 				if self.turn == 1:
 					self.attach_charm.run(subject, allies, enimies)
 				self.turn -= 1
-			elif self.summon_type == EffectType.Effect_Duration:
+			elif self.long_time_type == EffectType.Effect_Duration:
 				self.attach_charm.run(subject, allies, enimies)
 				self.turn -= 1
 			else:

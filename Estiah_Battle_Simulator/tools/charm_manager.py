@@ -25,3 +25,11 @@ if __name__ == '__main__':
 		saveCharms(charms)
 
 	testAddCharm()
+
+	"""
+	charm = Charm(id = '102', name = 'Wooden Sword', rune_type1 = RuneType.Sword, rune_type2 = RuneType.Null, is_attachment = False, lines = [RandomEffectLine([(Melee(5, 20), TargetType.Enimy)])])
+	x=charm.toJsonObj()
+	y=Charm.fromJsonObj(x)
+	z=y.toJsonObj()
+	print x==z
+	"""

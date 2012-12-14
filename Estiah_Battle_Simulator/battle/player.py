@@ -37,8 +37,9 @@ class Player(object):
 				random.shuffle(charm_list)
 		return charm_list
 
-	def __init__(self, name, max_hp, gear, has_order=False, is_no_dizzy=False):
+	def __init__(self, name, level, max_hp, gear, has_order=False, is_no_dizzy=False):
 		self.name = name
+		self.level = level
 		self.max_hp = max_hp
 		self.hp = self.max_hp
 		self.charm_list = Player.generate_charm_list(gear, has_order)
