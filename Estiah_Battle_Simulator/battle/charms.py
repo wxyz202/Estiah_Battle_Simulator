@@ -15,17 +15,17 @@ class RandomEffectLine(object):
 		obj['effects'] = [{'effect': effect.toJsonObj(), 'target': TargetType.reverse(target)} for effect, target in self.effect_target_list]
 		return obj
 
-	@staticmethod
+	@classmethod
 	def fromJsonObj(obj):
 		effect_target_list = [(Effect.fromJsonObj(effect_target['effect']), getattr(TargetType, effect_target['target'])) for effect_target in obj]
-		return RandomEffectLine(effect_target_list)
+		return cls(effect_target_list)
 
 class Charm(object):
-	def __init__(self, id, name, rune_type1, rune_type2, lines, is_attachment):
+	def __init__(self, id, name, rune1, rune2, lines, is_attachment):
 		self.id = id
 		self.name = name
-		self.rune_type1 = rune_type1
-		self.rune_type2 = rune_type2
+		self.rune1 = rune1
+		self.rune2 = rune2
 		self.lines = lines
 		self.is_attachment = is_attachment
 
@@ -88,8 +88,8 @@ class Charm(object):
 		obj = {
 			'id': self.id,
 			'name': self.name,
-			'rune_type1': RuneType.reverse(self.rune_type1),
-			'rune_type2': RuneType.reverse(self.rune_type2),
+			'rune1': RuneType.reverse(self.rune1),
+			'rune2': RuneType.reverse(self.rune2),
 			'is_attachment': self.is_attachment,
 			'lines': []
 		}
@@ -97,12 +97,12 @@ class Charm(object):
 			obj['lines'].append(line.toJsonObj())
 		return obj
 
-	@staticmethod
+	@classmethod
 	def fromJsonObj(obj):
 		id = obj['id']
 		name = obj['name']
-		rune_type1 = getattr(RuneType, obj['rune_type1'])
-		rune_type2 = getattr(RuneType, obj['rune_type2'])
+		rune1 = getattr(RuneType, obj['rune1'])
+		rune2 = getattr(RuneType, obj['rune2'])
 		is_attachment = obj['is_attachment']
 		lines = []
 		for l in obj['lines']:
@@ -110,6 +110,6 @@ class Charm(object):
 				lines.append(RandomEffectLine.fromJsonObj(l['effects']))
 			else:
 				lines.append(Condition.fromJsonObj(l['condition']))
-		return Charm(id, name, rune_type1, rune_type2, lines, is_attachment)
+		return cls(id, name, rune1, rune2, lines, is_attachment)
 
 NullCharm = Charm(None, None, None, None, [], False)

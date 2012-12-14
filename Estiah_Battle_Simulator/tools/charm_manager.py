@@ -19,7 +19,7 @@ def saveCharms(charms):
 if __name__ == '__main__':
 	def testAddCharm():
 		charms = loadCharms()
-		charm = Charm(id = '102', name = 'Wooden Sword', rune_type1 = RuneType.Sword, rune_type2 = RuneType.Null, is_attachment = False, lines = [RandomEffectLine([(Melee(5, 20), TargetType.Enimy)])])
+		charm = Charm(id = '102', name = 'Wooden Sword', rune1 = RuneType.Sword, rune2 = RuneType.Null, is_attachment = False, lines = [RandomEffectLine([(Melee(5, 20), TargetType.Enimy)])])
 		if charm.id not in charms:
 			charms[charm.id] = charm.toJsonObj()
 		saveCharms(charms)
@@ -27,7 +27,7 @@ if __name__ == '__main__':
 	testAddCharm()
 
 	"""
-	charm = Charm(id = '102', name = 'Wooden Sword', rune_type1 = RuneType.Sword, rune_type2 = RuneType.Null, is_attachment = False, lines = [RandomEffectLine([(Melee(5, 20), TargetType.Enimy)])])
+	charm = Charm(id = '102', name = 'Wooden Sword', rune1 = RuneType.Sword, rune2 = RuneType.Null, is_attachment = False, lines = [RandomEffectLine([(Melee(5, 20), TargetType.Enimy)])])
 	x=charm.toJsonObj()
 	y=Charm.fromJsonObj(x)
 	z=y.toJsonObj()

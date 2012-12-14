@@ -20,7 +20,7 @@
             }
         ], 
         "name": "Wooden Sword", 
-        "rune_type1": "Sword", 
-        "rune_type2": "Null"
+        "rune1": "Sword", 
+        "rune2": "Null"
     }
 }
