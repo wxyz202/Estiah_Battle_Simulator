@@ -1,0 +1,26 @@
+{
+    "Hamster Gear": {
+        "charm_list": [
+            {
+                "charm_id": "287", 
+                "number": 7
+            }
+        ], 
+        "has_order": false, 
+        "id": "Hamster Gear"
+    }, 
+    "Mouse Gear": {
+        "charm_list": [
+            {
+                "charm_id": "287", 
+                "number": 2
+            }, 
+            {
+                "charm_id": "288", 
+                "number": 3
+            }
+        ], 
+        "has_order": false, 
+        "id": "Mouse Gear"
+    }
+}

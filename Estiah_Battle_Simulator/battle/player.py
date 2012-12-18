@@ -2,51 +2,15 @@ import random
 from common.alltype import PlayerType
 
 class Player(object):
-	@staticmethod
-	def generate_charm_list(gear, has_order):
-		charm_list = []
-		if has_order:
-			i = 0
-			while len(charm_list) < 1000:
-				if len(gear) == 0:
-					break
-				charm_list.append(gear[i][0])
-				if gear[i][1] == None:
-					i+=1
-				elif gear[i][1] == 1:
-					gear.pop(i)
-				else:
-					gear[i] = (gear[i][0],gear[i][1]-1)
-					i += 1
-				if i >= len(gear):
-					i = 0
-		else:
-			if gear[-1][1] is None:
-				i = 0
-				while gear[i][1] is not None:
-					charm_list.append(gear[i][0])
-					if gear[i][1] == 1:
-						gear.pop(i)
-					else:
-						gear[i] = (gear[i][0],gear[i][1]-1)
-				while len(charm_list) < 1000:
-					charm_list.append(random.choice(gear)[0])
-			else:
-				for i in gear:
-					charm_list.extends([i[0]] * i[1])
-				random.shuffle(charm_list)
-		return charm_list
-
-	def __init__(self, name, level, max_hp, gear, has_order=False, is_no_dizzy=False):
+	def __init__(self, id, name, level, max_hp, is_no_dizzy=False):
+		self.id = id
 		self.name = name
 		self.level = level
 		self.max_hp = max_hp
 		self.hp = self.max_hp
-		self.charm_list = Player.generate_charm_list(gear, has_order)
 		self.charm_used = 0
-		self.max_spirit = len(charm_list)
-		self.spirit = self.max_spirit
 		self.turn_list = []
+		self.is_no_dizzy = is_no_dizzy
 		if is_no_dizzy:
 			self.max_dizzy_turn = 1000
 		else:
@@ -67,6 +31,11 @@ class Player(object):
 		self.effect_list = []
 		self.is_being_target_turn = 0
 		self.stun_turn = 0
+
+	def importGear(gear):
+		self.charm_list = gear.generate_charm_list()
+		self.max_spirit = len(charm_list)
+		self.spirit = self.max_spirit
 
 	def cleanse(self):
 		self.effect_list = [e for e in self.effect_list if not isinstance(e, Bane)]
@@ -104,6 +73,10 @@ class Player(object):
 	def outOfSpirit(self):
 		self.alive_type = PlayerType.Out_of_Spirit
 
+	def checkOutOfSpirit(self):
+		if self.spirit <= self.charm_used:
+			self.outOfSpirit()
+
 	def isAlive(self):
 		return self.alive_type == PlayerType.Alive
 
@@ -122,7 +95,7 @@ class Player(object):
 			self.spirit -= spirit
 		else:
 			self.spirit = 0
-			self.outOfSpirit()
+		self.checkOutOfSpirit()
 
 	def playCharm(self, enimy, allies, enimies, turn):
 		if self.stun_turn > 0:
@@ -131,7 +104,7 @@ class Player(object):
 			return False
 		charm = self.charm_list[self.charm_used]
 		self.charm_used += 1
-		if len(self.turn_list = []) or self.turn_list[-1][0] != turn:
+		if len(self.turn_list) == 0 or self.turn_list[-1][0] != turn:
 			self.turn_list.append((turn, [charm]))
 		else:
 			self.turn_list[-1][1].append(charm)
@@ -141,3 +114,15 @@ class Player(object):
 	def triggerEffects(self, allies, enimies, is_EA):
 		for effect in effect_list:
 			effect.run(self, None, allies, enimies, is_EA)
+
+	def toJsonObj(self):
+		return {'id': self.id, 'name': self.name, 'level': self.level, 'maxhp': self.max_hp, 'is_no_dizzy': self.is_no_dizzy}
+
+	@classmethod
+	def fromJsonObj(cls, obj):
+		id = obj['id']
+		name = obj['name']
+		level = obj['level']
+		max_hp = obj['max_hp']
+		is_no_dizzy = obj['is_no_dizzy']
+		return cls(id, name, level, max_hp, is_no_dizzy)

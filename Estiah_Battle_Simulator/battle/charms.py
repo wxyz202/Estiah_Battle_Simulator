@@ -16,7 +16,7 @@ class RandomEffectLine(object):
 		return obj
 
 	@classmethod
-	def fromJsonObj(obj):
+	def fromJsonObj(cls, obj):
 		effect_target_list = [(Effect.fromJsonObj(effect_target['effect']), getattr(TargetType, effect_target['target'])) for effect_target in obj]
 		return cls(effect_target_list)
 
@@ -79,7 +79,8 @@ class Charm(object):
 						if player.isAlive():
 							effect.run(subject, player, is_EA=self.is_EA(), is_attachment=self.is_attachment, AOE_players=len([p for p in allies + enimies if p.isAlive()]))
 				elif target == TargetType.LowestHpEnimy:
-					effect.run(subject, target.chooseLowestHpEnimy(enimies), is_EA=self.is_EA(), is_attachment=self.is_attachment)
+					target = targeting.chooseLowestHpEnimy(enimies)
+					effect.run(subject, target, is_EA=self.is_EA(), is_attachment=self.is_attachment)
 				else:
 					assert False
 		return has_EA
@@ -98,7 +99,7 @@ class Charm(object):
 		return obj
 
 	@classmethod
-	def fromJsonObj(obj):
+	def fromJsonObj(cls, obj):
 		id = obj['id']
 		name = obj['name']
 		rune1 = getattr(RuneType, obj['rune1'])

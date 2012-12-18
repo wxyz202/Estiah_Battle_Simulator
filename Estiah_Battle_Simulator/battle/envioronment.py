@@ -76,9 +76,19 @@ class Envioronment(object):
 			charm_in_turn += 1
 			if self.end():
 				break
+			if not player.isAlive():
+				break
+			player.checkOutOfSpirit()
+			self.focusTurnCheck()
+			if self.end():
+				break
+			if not player.isAlive():
+				break
 			player.triggerEffects(allies, enimies, is_EA)
 			self.focusTurnCheck()
 			if self.end():
+				break
+			if not player.isAlive():
 				break
 			if is_EA:
 				has_action = True

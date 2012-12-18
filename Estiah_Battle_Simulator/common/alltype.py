@@ -2,6 +2,8 @@ class BaseType(object):
 	@classmethod
 	def reverse(cls, value):
 		for attr in dir(cls):
+			if attr.startswith('_'):
+				continue
 			if getattr(cls, attr) == value:
 				return attr
 		return None

@@ -22,5 +22,201 @@
         "name": "Wooden Sword", 
         "rune1": "Sword", 
         "rune2": "Null"
+    }, 
+    "103": {
+        "id": "103", 
+        "is_attachment": false, 
+        "lines": [
+            {
+                "effects": [
+                    {
+                        "effect": {
+                            "effect_type": "Magic", 
+                            "params": {
+                                "damage": 4, 
+                                "p": 25
+                            }
+                        }, 
+                        "target": "Enimy"
+                    }
+                ], 
+                "line_type": "Effect"
+            }
+        ], 
+        "name": "Small Ice Wand", 
+        "rune1": "Frost", 
+        "rune2": "Null"
+    }, 
+    "104": {
+        "id": "104", 
+        "is_attachment": false, 
+        "lines": [
+            {
+                "effects": [
+                    {
+                        "effect": {
+                            "effect_type": "Armor", 
+                            "params": {
+                                "defense": 8, 
+                                "is_cumul": false
+                            }
+                        }, 
+                        "target": "Self"
+                    }
+                ], 
+                "line_type": "Effect"
+            }
+        ], 
+        "name": "Worn Leather Chest", 
+        "rune1": "Armor", 
+        "rune2": "Null"
+    }, 
+    "287": {
+        "id": "287", 
+        "is_attachment": false, 
+        "lines": [
+            {
+                "effects": [], 
+                "line_type": "Effect"
+            }
+        ], 
+        "name": "Squeek!", 
+        "rune1": "Tech", 
+        "rune2": "Null"
+    }, 
+    "288": {
+        "id": "288", 
+        "is_attachment": false, 
+        "lines": [
+            {
+                "effects": [], 
+                "line_type": "Effect"
+            }
+        ], 
+        "name": "Look Around", 
+        "rune1": "Tech", 
+        "rune2": "Null"
+    }, 
+    "289": {
+        "id": "289", 
+        "is_attachment": false, 
+        "lines": [
+            {
+                "effects": [
+                    {
+                        "effect": {
+                            "effect_type": "Melee", 
+                            "params": {
+                                "damage": 2, 
+                                "p": 0
+                            }
+                        }, 
+                        "target": "Enimy"
+                    }
+                ], 
+                "line_type": "Effect"
+            }
+        ], 
+        "name": "Finger Bite", 
+        "rune1": "Tech", 
+        "rune2": "Null"
+    }, 
+    "290": {
+        "id": "290", 
+        "is_attachment": false, 
+        "lines": [
+            {
+                "effects": [
+                    {
+                        "effect": {
+                            "effect_type": "Melee", 
+                            "params": {
+                                "damage": 3, 
+                                "p": 0
+                            }
+                        }, 
+                        "target": "Enimy"
+                    }
+                ], 
+                "line_type": "Effect"
+            }
+        ], 
+        "name": "Tiny Claws", 
+        "rune1": "Tech", 
+        "rune2": "Null"
+    }, 
+    "291": {
+        "id": "291", 
+        "is_attachment": false, 
+        "lines": [
+            {
+                "effects": [
+                    {
+                        "effect": {
+                            "effect_type": "Armor", 
+                            "params": {
+                                "defense": 4, 
+                                "is_cumul": false
+                            }
+                        }, 
+                        "target": "Self"
+                    }
+                ], 
+                "line_type": "Effect"
+            }
+        ], 
+        "name": "Harden Fur", 
+        "rune1": "Armor", 
+        "rune2": "Null"
+    }, 
+    "292": {
+        "id": "292", 
+        "is_attachment": false, 
+        "lines": [
+            {
+                "effects": [
+                    {
+                        "effect": {
+                            "effect_type": "Melee", 
+                            "params": {
+                                "damage": 4, 
+                                "p": 0
+                            }
+                        }, 
+                        "target": "Enimy"
+                    }
+                ], 
+                "line_type": "Effect"
+            }
+        ], 
+        "name": "Rat Slash", 
+        "rune1": "Tech", 
+        "rune2": "Null"
+    }, 
+    "293": {
+        "id": "293", 
+        "is_attachment": false, 
+        "lines": [
+            {
+                "effects": [], 
+                "line_type": "Effect"
+            }
+        ], 
+        "name": "Evil Look", 
+        "rune1": "Tech", 
+        "rune2": "Null"
+    }, 
+    "294": {
+        "id": "294", 
+        "is_attachment": false, 
+        "lines": [
+            {
+                "effects": [], 
+                "line_type": "Effect"
+            }
+        ], 
+        "name": "Eat Dirt", 
+        "rune1": "Tech", 
+        "rune2": "Null"
     }
 }
