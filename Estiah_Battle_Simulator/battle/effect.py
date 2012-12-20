@@ -1,4 +1,3 @@
-import copy
 from common.alltype import EffectType
 
 class Effect(object):

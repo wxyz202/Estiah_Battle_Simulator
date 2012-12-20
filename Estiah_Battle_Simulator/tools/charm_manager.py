@@ -1,26 +1,8 @@
-import json
 from common.alltype import TargetType, RuneType, LineType, EffectType
-from battle.charms import Charm, RandomEffectLine
-from battle.conditions import Condition
+from common.datahandler import *
+from battle.charm import Charm, RandomEffectLine
+from battle.condition import Condition
 from battle.effect import *
-
-def loadCharms():
-	f = open('data/charms.json')
-	charms = json.load(f)
-	f.close()
-	return charms
-
-def saveCharms(charms):
-	f = open('data/charms.json', 'w')
-	json.dump(charms, f, indent=4, sort_keys=True)
-	f.close()
-	return
-
-
-def loadCharm(charm_id):
-	charms = loadCharms()
-	return Charm.fromJsonObj(charms[charm_id])
-
 
 if __name__ == '__main__':
 

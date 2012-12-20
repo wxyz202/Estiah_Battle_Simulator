@@ -1,21 +1,5 @@
-import json
 from battle.player import Player
-
-def loadPlayers():
-	f = open('data/players.json')
-	players = json.load(f)
-	f.close()
-	return players
-
-def savePlayers(players):
-	f = open('data/players.json', 'w')
-	json.dump(players, f, indent=4, sort_keys=True)
-	f.close()
-	return
-
-def loadPlayer(player_id):
-	players = loadPlyers()
-	return Plyaer.fromJsonObj(players[player_id])
+from common.datahandler import *
 
 if __name__ == '__main__':
 	

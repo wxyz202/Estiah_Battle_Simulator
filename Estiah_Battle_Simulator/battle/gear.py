@@ -1,7 +1,7 @@
 import random
 import copy
 from common.alltype import PlayerType
-from tools.charm_manager import loadCharm
+from common.datahandler import loadCharmFromId
 
 class Gear(object):
 	def __init__(self, id, charm_list, has_order):
@@ -52,6 +52,6 @@ class Gear(object):
 	def fromJsonObj(cls, obj):
 		id = obj['id']
 		charm_list = obj['charm_list']
-		charm_list = [(loadCharm(d['charm_id']), d['number']) for d in charm_list]
+		charm_list = [(loadCharmFromId(d['charm_id']), d['number']) for d in charm_list]
 		has_order = obj['has_order']
 		return cls(id, charm_list, has_order)
