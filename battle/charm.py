@@ -1,8 +1,9 @@
 import random
 from common.enumtype import TargetType, RuneType, CharmTermType
+from charmterm import *
 import constants
 
-def BaseCharm(object):
+class BaseCharm(object):
 	def execute(self, subject, allies, enimies):
 		target = targeting.choose_enimy(enimies)
 		state_stack = []
@@ -61,7 +62,7 @@ class Charm(BaseCharm):
 		rune2 = getattr(RuneType, obj['rune2'])
 		charm_terms = []
 		for term in obj['charm_terms']:
-			charm_terms.append(term.from_json_obj())
+			charm_terms.append(CharmTerm.from_json_obj(term))
 		return cls(id, name, rune1, rune2, charm_terms)
 
 class AttachCharm(BaseCharm):
@@ -91,6 +92,6 @@ class AttachCharm(BaseCharm):
 		name = obj['name']
 		charm_terms = []
 		for term in obj['charm_terms']:
-			charm_terms.append(term.from_json_obj())
+			charm_terms.append(CharmTerm.from_json_obj(term))
 		return cls(id, name, charm_terms)
 

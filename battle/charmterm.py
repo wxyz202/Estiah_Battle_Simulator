@@ -2,7 +2,14 @@ import targeting
 from common.enumtype import TargetType, CharmTermType
 import constants
 
-class EffectTerm(object):
+class CharmTerm(object):
+	@staticmethod
+	def from_json_obj(obj):
+		charm_term_type = obj['charm_term_type']
+		charm_term = obj['charm_term']
+		return globals()[charm_term_type].from_json_obj(charm_term)
+
+class EffectTerm(CharmTerm):
 	def __init__(self, effect_target_list):
 		self.effect_target_list = effect_target_list
 	
@@ -37,10 +44,11 @@ class EffectTerm(object):
 			total_booster_multiplier *= (constants.AOE_BOOSTER_MULTIPLIER) / len(target_list)
 		else:
 			total_booster_multiplier *= 1
+		from effect import *
 		for target in target_list:
 			if isinstance(effect, Damage):
 				effect.execute(subject, target, base_multiplier, CPB_multiplier, NPB_multiplier, total_booster_multiplier)
-			elif isinstance(effect, FocusProtect) or isinstance(effect, Breakfocus):
+			elif isinstance(effect, FocusProtect) or isinstance(effect, BreakFocus):
 				effect.execute(subject, target, allies, enimies)
 			elif isinstance(effect, Projection):
 				effect.execute(subject, target)
@@ -52,11 +60,12 @@ class EffectTerm(object):
 				
 
 	def to_json_obj(self):
-		obj = {'charm_term_type': CharmTermType.reverse(CharmTermType.Effect)}
-		obj['effects'] = [{'effect': effect.to_json_obj(), 'target': TargetType.reverse(target)} for effect, target in self.effect_target_list]
+		obj = {'charm_term_type': CharmTermType.reverse(CharmTermType.EffectTerm)}
+		obj['charm_term'] = [{'effect': effect.to_json_obj(), 'target': TargetType.reverse(target)} for effect, target in self.effect_target_list]
 		return obj
 
 	@classmethod
 	def from_json_obj(cls, obj):
-		effect_target_list = [(Effect.from_json_obj(effect_target['effect']), getattr(TargetType, effect_target['target'])) for effect_target in obj['effects']]
+		from effect import Effect
+		effect_target_list = [(Effect.from_json_obj(effect_target['effect']), getattr(TargetType, effect_target['target'])) for effect_target in obj]
 		return cls(effect_target_list)

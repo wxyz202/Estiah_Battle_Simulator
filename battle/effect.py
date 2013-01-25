@@ -10,7 +10,7 @@ class Effect(object):
 
 
 class Damage(Effect):
-	def __init__(self, damage, penetrating):
+	def __init__(self, damage, penetrating=0):
 		self.damage = damage
 		self.penetrating = penetrating
 
@@ -302,17 +302,17 @@ class DefenseDestroy(Effect):
 		defense = obj['defense']
 		return cls(defense)
 
-class ArmorDestroy(Effect):
+class ArmorDestroy(DefenseDestroy):
 	def execute(self, subject, target, base_multiplier):
 		target.set_ward(self.cal_defense(target.get_armor(), base_multiplier))
 		return
 
-class WardDestroy(Effect):
+class WardDestroy(DefenseDestroy):
 	def execute(self, subject, target, base_multiplier):
 		target.set_ward(self.cal_defense(target.get_ward(), base_multiplier))
 		return
 
-class WillpowerDestroy(Effect):
+class WillpowerDestroy(DefenseDestroy):
 	def execute(self, subject, target, base_multiplier):
 		target.set_willpower(self.cal_defense(target.get_willpower(), base_multiplier))
 		return
@@ -605,12 +605,13 @@ class LongTimeEffect(Effect):
 	def from_json_obj(cls, obj):
 		turn = obj['turn']
 		long_time_type = getattr(EffectType,obj['long_time_type'])
+		from charm import AttachCharm
 		attach_charm = AttachCharm.from_json_obj(obj['attach_charm'])
 		return cls(turn, long_time_type, attach_charm)
 
 class Aura(LongTimeEffect):
 	def trigger_stun(self, allies, enimies):
-		self.turn -= 1:
+		self.turn -= 1
 		self.trigger(self, allies, enimies)
 
 	def trigger_extra_action(self, allies, enimies):
@@ -636,7 +637,7 @@ class Curse(LongTimeEffect):
 
 class Summon(LongTimeEffect):
 	def trigger_stun(self, allies, enimies):
-		self.turn -= 1:
+		self.turn -= 1
 		self.trigger(self, allies, enimies)
 
 	def trigger_extra_action(self, allies, enimies):

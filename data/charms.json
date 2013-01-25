@@ -1,1 +1,413 @@
-{}
+{
+    "1057": {
+        "charm_terms": [
+            {
+                "charm_term": [
+                    {
+                        "effect": {
+                            "effect_type": "ShiftingDamage", 
+                            "params": {
+                                "damage": 45, 
+                                "penetrating": 0
+                            }
+                        }, 
+                        "target": "Enimy"
+                    }
+                ], 
+                "charm_term_type": "EffectTerm"
+            }
+        ], 
+        "id": "1057", 
+        "name": "Thor's Fist", 
+        "rune1": "Mace", 
+        "rune2": "Lightning"
+    }, 
+    "1077": {
+        "charm_terms": [
+            {
+                "charm_term": [
+                    {
+                        "effect": {
+                            "effect_type": "Magic", 
+                            "params": {
+                                "damage": 41, 
+                                "penetrating": 32
+                            }
+                        }, 
+                        "target": "Enimy"
+                    }
+                ], 
+                "charm_term_type": "EffectTerm"
+            }
+        ], 
+        "id": "1077", 
+        "name": "Challenger's Aquatic Ring", 
+        "rune1": "Frost", 
+        "rune2": "Null"
+    }, 
+    "1108": {
+        "charm_terms": [
+            {
+                "charm_term": [
+                    {
+                        "effect": {
+                            "effect_type": "Magic", 
+                            "params": {
+                                "damage": 53, 
+                                "penetrating": 15
+                            }
+                        }, 
+                        "target": "Enimy"
+                    }
+                ], 
+                "charm_term_type": "EffectTerm"
+            }
+        ], 
+        "id": "1108", 
+        "name": "Demon Heart", 
+        "rune1": "Frost", 
+        "rune2": "Null"
+    }, 
+    "1221": {
+        "charm_terms": [
+            {
+                "charm_term": [
+                    {
+                        "effect": {
+                            "effect_type": "OngoingMagic", 
+                            "params": {
+                                "boost": 13
+                            }
+                        }, 
+                        "target": "Self"
+                    }
+                ], 
+                "charm_term_type": "EffectTerm"
+            }, 
+            {
+                "charm_term": [
+                    {
+                        "effect": {
+                            "effect_type": "Attach", 
+                            "params": {
+                                "long_time_effect": {
+                                    "effect_type": "Curse", 
+                                    "params": {
+                                        "attach_charm": {
+                                            "charm_terms": [
+                                                {
+                                                    "charm_term": [
+                                                        {
+                                                            "effect": {
+                                                                "effect_type": "WardDestroy", 
+                                                                "params": {
+                                                                    "defense": 10
+                                                                }
+                                                            }, 
+                                                            "target": "Self"
+                                                        }
+                                                    ], 
+                                                    "charm_term_type": "EffectTerm"
+                                                }
+                                            ], 
+                                            "id": "1221 Curse", 
+                                            "name": "Superior Fire Oil - Curse"
+                                        }, 
+                                        "long_time_type": "AttachmentDuring", 
+                                        "turn": 6
+                                    }
+                                }
+                            }
+                        }, 
+                        "target": "Self"
+                    }
+                ], 
+                "charm_term_type": "EffectTerm"
+            }
+        ], 
+        "id": "1221", 
+        "name": "Superior Fire Oil", 
+        "rune1": "Buff", 
+        "rune2": "Null"
+    }, 
+    "1496": {
+        "charm_terms": [
+            {
+                "charm_term": [
+                    {
+                        "effect": {
+                            "effect_type": "ExtraAction", 
+                            "params": {
+                                "turn": 1
+                            }
+                        }, 
+                        "target": "Self"
+                    }
+                ], 
+                "charm_term_type": "EffectTerm"
+            }, 
+            {
+                "charm_term": [
+                    {
+                        "effect": {
+                            "effect_type": "OngoingMagic", 
+                            "params": {
+                                "boost": 5
+                            }
+                        }, 
+                        "target": "Self"
+                    }
+                ], 
+                "charm_term_type": "EffectTerm"
+            }, 
+            {
+                "charm_term": [
+                    {
+                        "effect": {
+                            "effect_type": "LifeLose", 
+                            "params": {
+                                "life": 5
+                            }
+                        }, 
+                        "target": "Self"
+                    }
+                ], 
+                "charm_term_type": "EffectTerm"
+            }
+        ], 
+        "id": "1496", 
+        "name": "Icy Winds", 
+        "rune1": "Frost", 
+        "rune2": "Buff"
+    }, 
+    "610": {
+        "charm_terms": [
+            {
+                "charm_term": [
+                    {
+                        "effect": {
+                            "effect_type": "ExtraAction", 
+                            "params": {
+                                "turn": 1
+                            }
+                        }, 
+                        "target": "Self"
+                    }
+                ], 
+                "charm_term_type": "EffectTerm"
+            }, 
+            {
+                "charm_term": [
+                    {
+                        "effect": {
+                            "effect_type": "Spirit", 
+                            "params": {
+                                "damage": 1, 
+                                "penetrating": 0
+                            }
+                        }, 
+                        "target": "Self"
+                    }
+                ], 
+                "charm_term_type": "EffectTerm"
+            }, 
+            {
+                "charm_term": [
+                    {
+                        "effect": {
+                            "effect_type": "Magic", 
+                            "params": {
+                                "damage": 18, 
+                                "penetrating": 0
+                            }
+                        }, 
+                        "target": "Enimy"
+                    }
+                ], 
+                "charm_term_type": "EffectTerm"
+            }
+        ], 
+        "id": "610", 
+        "name": "Hastened Blast", 
+        "rune1": "Tech", 
+        "rune2": "Null"
+    }, 
+    "668": {
+        "charm_terms": [
+            {
+                "charm_term": [
+                    {
+                        "effect": {
+                            "effect_type": "ExtraAction", 
+                            "params": {
+                                "turn": 1
+                            }
+                        }, 
+                        "target": "Self"
+                    }
+                ], 
+                "charm_term_type": "EffectTerm"
+            }, 
+            {
+                "charm_term": [
+                    {
+                        "effect": {
+                            "effect_type": "WardDestroy", 
+                            "params": {
+                                "defense": 30
+                            }
+                        }, 
+                        "target": "Self"
+                    }
+                ], 
+                "charm_term_type": "EffectTerm"
+            }, 
+            {
+                "charm_term": [
+                    {
+                        "effect": {
+                            "effect_type": "NextMagic", 
+                            "params": {
+                                "boost": 18
+                            }
+                        }, 
+                        "target": "Self"
+                    }
+                ], 
+                "charm_term_type": "EffectTerm"
+            }
+        ], 
+        "id": "668", 
+        "name": "Blue Dragon Bone", 
+        "rune1": "Tech", 
+        "rune2": "Null"
+    }, 
+    "968": {
+        "charm_terms": [
+            {
+                "charm_term": [
+                    {
+                        "effect": {
+                            "effect_type": "Magic", 
+                            "params": {
+                                "damage": 25, 
+                                "penetrating": 20
+                            }
+                        }, 
+                        "target": "Enimy"
+                    }
+                ], 
+                "charm_term_type": "EffectTerm"
+            }, 
+            {
+                "charm_term": [
+                    {
+                        "effect": {
+                            "effect_type": "Attach", 
+                            "params": {
+                                "long_time_effect": {
+                                    "effect_type": "Bane", 
+                                    "params": {
+                                        "attach_charm": {
+                                            "charm_terms": [
+                                                {
+                                                    "charm_term": [
+                                                        {
+                                                            "effect": {
+                                                                "effect_type": "Magic", 
+                                                                "params": {
+                                                                    "damage": 7, 
+                                                                    "penetrating": 40
+                                                                }
+                                                            }, 
+                                                            "target": "Enimy"
+                                                        }
+                                                    ], 
+                                                    "charm_term_type": "EffectTerm"
+                                                }
+                                            ], 
+                                            "id": "968 Bane", 
+                                            "name": "Shaman Inner Flames - Bane"
+                                        }, 
+                                        "long_time_type": "AttachmentDuring", 
+                                        "turn": 5
+                                    }
+                                }
+                            }
+                        }, 
+                        "target": "Enimy"
+                    }
+                ], 
+                "charm_term_type": "EffectTerm"
+            }
+        ], 
+        "id": "968", 
+        "name": "Shaman Inner Flames", 
+        "rune1": "Tech", 
+        "rune2": "Null"
+    }, 
+    "973": {
+        "charm_terms": [
+            {
+                "charm_term": [
+                    {
+                        "effect": {
+                            "effect_type": "Magic", 
+                            "params": {
+                                "damage": 28, 
+                                "penetrating": 20
+                            }
+                        }, 
+                        "target": "Enimy"
+                    }
+                ], 
+                "charm_term_type": "EffectTerm"
+            }, 
+            {
+                "charm_term": [
+                    {
+                        "effect": {
+                            "effect_type": "Attach", 
+                            "params": {
+                                "long_time_effect": {
+                                    "effect_type": "Bane", 
+                                    "params": {
+                                        "attach_charm": {
+                                            "charm_terms": [
+                                                {
+                                                    "charm_term": [
+                                                        {
+                                                            "effect": {
+                                                                "effect_type": "Magic", 
+                                                                "params": {
+                                                                    "damage": 8, 
+                                                                    "penetrating": 40
+                                                                }
+                                                            }, 
+                                                            "target": "Enimy"
+                                                        }
+                                                    ], 
+                                                    "charm_term_type": "EffectTerm"
+                                                }
+                                            ], 
+                                            "id": "973 Bane", 
+                                            "name": "Shaman Voltage - Bane"
+                                        }, 
+                                        "long_time_type": "AttachmentDuring", 
+                                        "turn": 5
+                                    }
+                                }
+                            }
+                        }, 
+                        "target": "Enimy"
+                    }
+                ], 
+                "charm_term_type": "EffectTerm"
+            }
+        ], 
+        "id": "973", 
+        "name": "Shaman Voltage", 
+        "rune1": "Tech", 
+        "rune2": "Null"
+    }
+}

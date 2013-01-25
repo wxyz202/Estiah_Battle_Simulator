@@ -85,7 +85,7 @@ RuneType = BaseEnumType("""
 	Earth
 	Shadow
 	Holy
-	Lighting
+	Lightning
 	Frost
 	Fire
 	Spirit
@@ -105,11 +105,11 @@ ConditionType = BaseEnumType("""
 """)
 
 CharmTermType = BaseEnumType("""
-	Condition 
-	ChangeTarget
-	ForEachMultiplier
-	ConsumeMultiplier
-	Effect
+	ConditionTerm
+	ChangeTargetTerm
+	ForEachMultiplierTerm
+	ConsumeMultiplierTerm
+	EffectTerm
 	End
 """)
 
