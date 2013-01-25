@@ -1,16 +1,16 @@
 class BaseEnumType(object):
-	def __init__(self, s):
-		elements = s.split()
-		self.__enum_dict = dict(zip(elements, range(len(elements))))
+	def __init__(self, elements):
+		elements = elements.split()
+		self._enum_dict = dict(zip(elements, range(len(elements))))
 
 	def __getattr__(self, attr):
-		if attr not in self.__enum_dict:
+		if attr not in self._enum_dict:
 			raise AttributeError('This object has no attribute %s' %(attr))
-		return self.__enum_dict[attr]
+		return self._enum_dict[attr]
 
 	def reverse(self, value):
-		for attr in self.__enum_dict:
-			if self.__enum_dict[attr] == value:
+		for attr in self._enum_dict:
+			if self._enum_dict[attr] == value:
 				return attr
 		return None
 
@@ -33,21 +33,26 @@ EffectType = BaseEnumType("""
 	WardDestroy
 	WillpowerDestroy
 	ExtraAction
-	FocusOrProtect
+	FocusProtect
+	BreakFocus
+	Vanish
 	Stun
 	NextMelee
 	NextMagic
+	NextSpirit
 	OngoingMelee
 	OngoingMagic
+	OngoingSpirit
 	Cleanse
 	Purge
 	Normalize
+	Attach
 	Aura
 	Bane
 	Curse
 	Summon
-	Effect_After
-	Effect_During
+	AttachmentAfter
+	AttachmentDuring
 """)
 
 PlayerType = BaseEnumType("""
@@ -61,12 +66,12 @@ PlayerType = BaseEnumType("""
 
 TargetType = BaseEnumType("""
 	Null
-	Enimy
 	Self
-	AllAllies
-	AllEnimies
+	Enimy
+	All_Allies
+	All_Enimies
 	All
-	LowestHpEnimy
+	Lowest_Hp_Enimy
 """)
 
 RuneType = BaseEnumType("""
@@ -95,11 +100,20 @@ RuneType = BaseEnumType("""
 
 ConditionType = BaseEnumType("""
 	Null
-	EndCondition
-	BeingTarget
+	End_Condition
+	Being_Target
 """)
 
-LineType = BaseEnumType("""
+CharmTermType = BaseEnumType("""
 	Condition 
+	ChangeTarget
+	ForEachMultiplier
+	ConsumeMultiplier
 	Effect
+	End
+""")
+
+EnvioronmentType = BaseEnumType("""
+	Win
+	Lose
 """)

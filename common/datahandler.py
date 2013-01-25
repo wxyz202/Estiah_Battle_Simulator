@@ -1,54 +1,54 @@
 import json
 
-def loadCharms():
+def load_charms():
 	f = open('data/charms.json')
 	charms = json.load(f)
 	f.close()
 	return charms
 
-def saveCharms(charms):
+def save_charms(charms):
 	f = open('data/charms.json', 'w')
 	json.dump(charms, f, indent=4, sort_keys=True)
 	f.close()
 	return
 
-def loadCharmFromId(charm_id):
-	charms = loadCharms()
+def load_charm_from_id(charm_id):
+	charms = load_charms()
 	from battle.charm import Charm
-	return Charm.fromJsonObj(charms[charm_id])
+	return Charm.from_json_obj(charms[charm_id])
 
 
-def loadGears():
+def load_gears():
 	f = open('data/gears.json')
 	gears = json.load(f)
 	f.close()
 	return gears
 
-def saveGears(gears):
+def save_gears(gears):
 	f = open('data/gears.json', 'w')
 	json.dump(gears, f, indent=4, sort_keys=True)
 	f.close()
 	return
 
-def loadGearFromId(gear_id):
+def load_gear_from_id(gear_id):
 	gears = loadGears()
 	from battle.gear import Gear
-	return Gear.fromJsonObj(gears[gear_id])
+	return Gear.from_json_obj(gears[gear_id])
 
 
-def loadPlayers():
+def load_players():
 	f = open('data/players.json')
 	players = json.load(f)
 	f.close()
 	return players
 
-def savePlayers(players):
+def save_players(players):
 	f = open('data/players.json', 'w')
 	json.dump(players, f, indent=4, sort_keys=True)
 	f.close()
 	return
 
-def loadPlayerFromId(player_id):
+def load_player_from_id(player_id):
 	players = loadPlyers()
 	from battle.player import Player
-	return Plyaer.fromJsonObj(players[player_id])
+	return Plyaer.from_json_obj(players[player_id])

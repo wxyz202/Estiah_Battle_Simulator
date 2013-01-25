@@ -1,0 +1,3 @@
+drain only take 65% from booster(round up)
+ea only take 20% from CPB(round douwn, either positive or negative)
+aoe booster = (4/3) x Boosts / Total number of targets (rounded)
