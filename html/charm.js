@@ -1,6 +1,3 @@
-<head>
-<title>test</title>
-<script type="text/javascript">
 var runeOptions = ["Null", "Buff", "Debuff", "Tech"];
 var targetOptions = ["Self", "Enimy", "All_Enimies", "All_Allies", "All"];
 var termOptions = [
@@ -353,17 +350,3 @@ function myDebug() {
 	var selectedIndex = term.firstChild.selectedIndex;
 	alert(term.firstChild.options[selectedIndex].text);
 }
-</script>
-</head>
-<body>
-<p>charm ID: <input id="charmId" type="text" style="width: 40px"></input> charm name: <input id="charmName" type="text" style="width: 200px"></input> rune1: <select id="rune1"></select> rune2: <select id="rune2"></select></p>
-<p id="charminput"></p>
-<button onclick="addTerm()">Add Term</button> <button onclick="delTerm()">Delete Term</button> <button onclick="resetTerms()">Reset</button>
-<p>
-	<button onclick="createCharm()">Create!</button>
-	<br />
-	<textarea id="charmoutput" style="width: 1000px; height: 200px;"></textarea>
-</p>
-<button onclick="myDebug()">debug</button>
-<script>addOptionsToSelect(document.getElementById("rune1"), runeOptions);addOptionsToSelect(document.getElementById("rune2"), runeOptions);</script>
-</body>
