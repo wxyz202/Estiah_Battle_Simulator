@@ -31,7 +31,7 @@ def save_gears(gears):
 	return
 
 def load_gear_from_id(gear_id):
-	gears = loadGears()
+	gears = load_gears()
 	from battle.gear import Gear
 	return Gear.from_json_obj(gears[gear_id])
 
@@ -49,6 +49,6 @@ def save_players(players):
 	return
 
 def load_player_from_id(player_id):
-	players = loadPlyers()
+	players = load_players()
 	from battle.player import Player
-	return Plyaer.from_json_obj(players[player_id])
+	return Player.from_json_obj(players[player_id])

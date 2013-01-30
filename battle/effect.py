@@ -21,13 +21,6 @@ class Damage(Effect):
 		damage += booster
 		return damage, penetrating
 
-	@staticmethod
-	def cal_real_damage(damage, penetrating, defense):
-		if damage <= defense:
-			return damage*penetrating/100, defense-damage
-		else:
-			return (damage-defense + defense*penetrating/100), 0
-
 	def to_json_obj(self):
 		obj = {
 			'effect_type': self.__class__.__name__,
@@ -47,96 +40,77 @@ class Damage(Effect):
 class Melee(Damage):
 	def execute(self, subject, target, base_multiplier, CPB_multiplier, NPB_multiplier, total_booster_multiplier):
 		melee, penetrating = self.cal_damage(subject.get_melee_CPB(), subject.get_melee_NPB(), base_multiplier, CPB_multiplier, NPB_multiplier, total_booster_multiplier)
-		armor = target.get_armor()
-		melee, armor = cal_real_damage(melee, penetrating, armor)
-		target.set_armor(armor)
-		subject.duel_melee_damage(melee)
+		target.take_melee_damage(melee, penetrating)
 		if subject.NPB_multiplier != 0:
 			subject.use_melee_NPB()
-		target.take_melee_damage(melee)
 		return
 		
 class MeleeDrain(Melee):
 	def execute(self, subject, target, base_multiplier, CPB_multiplier, NPB_multiplier, total_booster_multiplier):
 		total_booster_multiplier *= constants.DRAIN_BOOSTER_MULTIPLIER
 		melee, penetrating = self.cal_damage(subject.get_melee_CPB(), subject.get_melee_NPB(), base_multiplier, CPB_multiplier, NPB_multiplier, total_booster_multiplier)
-		armor = target.get_armor()
-		melee, armor = cal_real_damage(melee, penetrating, armor)
-		target.set_armor(armor)
-		subject.duel_melee_damage(melee)
+		damage, absorbed, pierced = target.take_melee_damage(melee, penetrating)
 		if subject.NPB_multiplier != 0:
 			subject.use_melee_NPB()
-		target.take_melee_damage(melee)
-		subject.increase_hp(melee)
+		subject.increase_hp(damage)
 		return
 
 class Magic(Damage):
 	def execute(self, subject, target, base_multiplier, CPB_multiplier, NPB_multiplier, total_booster_multiplier):
 		magic, penetrating = self.cal_damage(subject.get_magic_CPB(), subject.get_magic_NPB(), base_multiplier, CPB_multiplier, NPB_multiplier, total_booster_multiplier)
-		ward = target.get_ward()
-		magic, ward = cal_real_damage(magic, penetrating, ward)
-		target.set_ward(ward)
-		subject.duel_magic_damage(magic)
+		target.take_magic_damage(magic, penetrating)
 		if subject.NPB_multiplier != 0:
 			subject.use_magic_NPB()
-		target.take_magic_damage(magic)
 		return
 
 class MagicDrain(Magic):
 	def execute(self, subject, target, base_multiplier, CPB_multiplier, NPB_multiplier, total_booster_multiplier):
 		total_booster_multiplier *= constants.DRAIN_BOOSTER_MULTIPLIER
 		magic, penetrating = self.cal_damage(subject.get_magic_CPB(), subject.get_magic_NPB(), base_multiplier, CPB_multiplier, NPB_multiplier, total_booster_multiplier)
-		ward = target.get_ward()
-		magic, ward = cal_real_damage(magic, penetrating, ward)
-		target.set_ward(ward)
-		subject.duel_magic_damage(magic)
+		damage, absorbed, pierced = target.take_melee_damage(melee, penetrating)
 		if subject.NPB_multiplier != 0:
 			subject.use_magic_NPB()
-		target.take_magic_damage(magic)
-		subject.increase_hp(magic)
+		subject.increase_hp(damage)
 		return
 
 class ShiftingDamage(Damage):
+	@staticmethod
+	def cal_real_damage(damage, penetrating, defense):
+		if damage <= defense:
+			return damage*penetrating/100
+		else:
+			return damage-defense + defense*penetrating/100
+
 	def execute(self, subject, target, base_multiplier, CPB_multiplier, NPB_multiplier, total_booster_multiplier):
 		melee, penetrating = self.cal_damage(subject.get_melee_CPB(), subject.get_melee_NPB(), base_multiplier, CPB_multiplier, NPB_multiplier, total_booster_multiplier)
 		armor = target.get_armor()
-		melee, armor = cal_real_damage(melee, penetrating, armor)
 		magic, penetrating = self.cal_damage(subject.get_magic_CPB(), subject.get_magic_NPB(), base_multiplier, CPB_multiplier, NPB_multiplier, total_booster_multiplier)
 		ward = target.get_ward()
-		magic, ward = cal_real_damage(magic, penetrating, ward)
-		if melee > magic:
-			subject.duel_melee_damage(melee)
+		if cal_real_damage(melee, penetrating, armor) > cal_real_damage(magic, penetrating, ward):
 			if subject.NPB_multiplier != 0:
 				subject.use_melee_NPB()
-			target.take_melee_damage(melee)
-			target.set_armor(armor)
+			target.take_melee_damage(melee, penetrating)
 		else:
-			subject.duel_magic_damage(magic)
 			if subject.NPB_multiplier != 0:
 				subject.use_magic_NPB()
-			target.take_magic_damage(magic)
-			target.set_ward(ward)
+			target.take_magic_damage(magic, penetrating)
 		return
 
 class Spirit(Damage):
-	def cal_damage(self, CPB_multiplier, NPB_multiplier, total_booster_multiplier):
+	def cal_damage(self, CPB, NPB, base_multiplier, CPB_multiplier, NPB_multiplier, total_booster_multiplier):
 		if CPB_multiplier != 0:
 			CPB_multiplier = 1
 		if NPB_multiplier != 0:
 			NPB_multiplier = 1
 		if total_booster_multiplier != 0:
 			total_booster_multiplier = 1
-		return Damage.cal_damage(self, CPB_multiplier, NPB_multiplier, total_booster_multiplier) 
+		return Damage.cal_damage(self, CPB, NPB, base_multiplier, CPB_multiplier, NPB_multiplier, total_booster_multiplier) 
 	
 	def execute(self, subject, target, base_multiplier, CPB_multiplier, NPB_multiplier, total_booster_multiplier):
 		spirit, penetrating = self.cal_damage(subject.get_spirit_CPB(), subject.get_spirit_NPB(), base_multiplier, CPB_multiplier, NPB_multiplier, total_booster_multiplier)
-		willpower = target.get_willpower()
-		spirit, willpower = cal_real_damage(spirit, penetrating, willpower)
-		target.set_willpower(willpower)
-		subject.duel_spirit_damage(spirit)
+		target.take_spirit_damage(spirit, penetrating)
 		if subject.NPB_multiplier != 0:
 			subject.use_spirit_NPB()
-		target.take_spirit_damage(spirit)
 		return
 
 
@@ -144,12 +118,6 @@ class Defense(Effect):
 	def __init__(self, defense, is_cumul):
 		self.defense = defense
 		self.is_cumul = is_cumul
-
-	def cal_defense(self, old_defense, base_multiplier):
-		if self.is_cumul:
-			return old_defense + self.defense * base_multiplier
-		else:
-			return max(old_defense, self.defense * base_multiplier)
 
 	def to_json_obj(self):
 		obj = {
@@ -170,24 +138,24 @@ class Defense(Effect):
 
 class Armor(Defense):
 	def execute(self, subject, target, base_multiplier):
-		target.set_armor(self.cal_defense(target.get_armor(), base_multiplier))
+		target.gain_armor(self.defense * base_multiplier, self.is_cumul)
 
 class Ward(Defense):
 	def execute(self, subject, target, base_multiplier):
-		target.set_ward(self.cal_defense(target.get_ward(), base_multiplier))
+		target.gain_ward(self.defense * base_multiplier, self.is_cumul)
 
 class ShiftingDefense(Defense):
 	def execute(self, subject, target, base_multiplier):
 		armor = target.get_armor()
 		ward = target.get_ward()
 		if armor < ward:
-			target.set_armor(self.cal_defense(armor),base_multiplier)
+			target.gain_armor(self.defense * base_multiplier, self.is_cumul)
 		else:
-			target.set_ward(self.cal_defense(ward),base_multiplier)
+			target.gain_ward(self.defense * base_multiplier, self.is_cumul)
 
 class Willpower(Defense):
 	def execute(self, subject, target, base_multiplier):
-		target.set_willpower(self.cal_defense(target.get_willpower(), base_multiplier))
+		target.gain_willpower(self.defense * base_multiplier, self.is_cumul)
 
 
 class Projection(Effect):
@@ -203,19 +171,11 @@ class Projection(Effect):
 			defense = subject.get_ward()
 		else:
 			assert False
-		damage = max(defense, self.max_damage)
+		damage = min(defense, self.max_damage)
 		if self.damage_type == EffectType.Melee:
-			armor = target.get_armor()
-			melee, armor = Damage.cal_real_damage(damage, 0, armor)
-			target.set_armor(armor)
-			subject.duel_melee_damage(melee)
-			target.take_melee_damage(melee)
+			target.take_melee_damage(damage, 0)
 		elif self.damage_type == EffectType.Magic:
-			ward = target.get_ward()
-			magic, ward = Damage.cal_real_damage(damage, 0, ward)
-			target.set_ward(ward)
-			subject.duel_magic_damage(magic)
-			target.take_magic_damage(magic)
+			target.take_magic_damage(damage, 0)
 		return
 
 	def to_json_obj(self):
@@ -285,9 +245,6 @@ class DefenseDestroy(Effect):
 	def __init__(self, defense):
 		self.defense = defense
 
-	def cal_defense(old_defense, base_multiplier):
-		return max(old_defense - self.defense * base_multiplier, 0)
-
 	def to_json_obj(self):
 		obj = {
 			'effect_type': self.__class__.__name__,
@@ -304,17 +261,17 @@ class DefenseDestroy(Effect):
 
 class ArmorDestroy(DefenseDestroy):
 	def execute(self, subject, target, base_multiplier):
-		target.set_ward(self.cal_defense(target.get_armor(), base_multiplier))
+		target.lose_armor(self.defense * base_multiplier)
 		return
 
 class WardDestroy(DefenseDestroy):
 	def execute(self, subject, target, base_multiplier):
-		target.set_ward(self.cal_defense(target.get_ward(), base_multiplier))
+		target.lose_ward(self.defense * base_multiplier)
 		return
 
 class WillpowerDestroy(DefenseDestroy):
 	def execute(self, subject, target, base_multiplier):
-		target.set_willpower(self.cal_defense(target.get_willpower(), base_multiplier))
+		target.lose_willpower(self.defense * base_multiplier)
 		return
 
 class ExtraAction(Effect):

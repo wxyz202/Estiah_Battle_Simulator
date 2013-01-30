@@ -1,1 +1,80 @@
-{}
+{
+    "zgreee - auto magic": {
+        "gear": [
+            {
+                "charm_id": "668", 
+                "number": 5
+            }, 
+            {
+                "charm_id": "610", 
+                "number": 3
+            }, 
+            {
+                "charm_id": "968", 
+                "number": 5
+            }, 
+            {
+                "charm_id": "973", 
+                "number": 5
+            }, 
+            {
+                "charm_id": "1057", 
+                "number": 5
+            }, 
+            {
+                "charm_id": "1077", 
+                "number": 5
+            }, 
+            {
+                "charm_id": "1108", 
+                "number": 5
+            }, 
+            {
+                "charm_id": "1221", 
+                "number": 5
+            }, 
+            {
+                "charm_id": "1496", 
+                "number": 5
+            }
+        ], 
+        "id": "zgreee - auto magic"
+    }, 
+    "zgreee3 - auto": {
+        "gear": [
+            {
+                "charm_id": "668", 
+                "number": 5
+            }, 
+            {
+                "charm_id": "940", 
+                "number": 5
+            }, 
+            {
+                "charm_id": "1074", 
+                "number": 5
+            }, 
+            {
+                "charm_id": "1221", 
+                "number": 5
+            }, 
+            {
+                "charm_id": "344", 
+                "number": 5
+            }, 
+            {
+                "charm_id": "947", 
+                "number": 5
+            }, 
+            {
+                "charm_id": "1078", 
+                "number": 5
+            }, 
+            {
+                "charm_id": "942", 
+                "number": 5
+            }
+        ], 
+        "id": "zgreee3 - auto"
+    }
+}

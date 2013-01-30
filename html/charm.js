@@ -1,4 +1,4 @@
-var runeOptions = ["Null", "Buff", "Debuff", "Tech"];
+var runeOptions = ["Null", "Axe", "Sword", "Mace", "Twinblades", "Spear", "Fist", "Earth", "Shadow", "Holy", "Lightning", "Frost", "Fire", "Spirit", "Armor", "Ward", "Willpower", "Summon", "Buff", "Debuff", "Tech"];
 var targetOptions = ["Self", "Enimy", "All_Enimies", "All_Allies", "All"];
 var termOptions = [
 	"==Damage==", "Melee", "MeleeDrain", "Magic", "MagicDrain", "ShiftingDamage", "Spirit",
@@ -329,20 +329,22 @@ function createCharm() {
 	var rune1 = getOptionTextFromSelected(document.getElementById("rune1"));
 	var rune2 = getOptionTextFromSelected(document.getElementById("rune2"));
 	var text = "\tcharm = Charm(\n";
-	text = text + "\t\tid=\"" + id + "\",\n";
-	text = text + "\t\tname=\"" + name + "\",\n";
-	text = text + "\t\trune1=RuneType." + rune1 + ",\n";
-	text = text + "\t\trune2=RuneType." + rune2 + ",\n";
+	text = text + "\t\tid = \"" + id + "\",\n";
+	text = text + "\t\tname = \"" + name + "\",\n";
+	text = text + "\t\trune1 = RuneType." + rune1 + ",\n";
+	text = text + "\t\trune2 = RuneType." + rune2 + ",\n";
+	text = text + "\t\tcharm_terms = [\n";
 	for (var i = 0; i < termCount; i++) {
-		text = text + "\t\t" + termToCode(document.getElementById("term" + i));
+		text = text + "\t\t\t" + termToCode(document.getElementById("term" + i));
 		if (i+1 != termCount) {
 			text = text + ",";
 		}
 		text = text + "\n";
 	}
-	text = text + "\t)"
+	text = text + "\t\t]\n";
+	text = text + "\t)";
 	var outputArea = document.getElementById("charmoutput");
-	outputArea.value = text
+	outputArea.value = text;
 }
 
 function myDebug() {

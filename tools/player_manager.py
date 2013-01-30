@@ -3,16 +3,25 @@ from common.datahandler import *
 
 if __name__ == '__main__':
 	
-	def testAddPlayer():
-		players = loadPlayers()
-		def addPlayer(player):
-			if player.id not in players:
-				players[player.id] = player.toJsonObj()
-			return
-		addPlayer(Player('Hamster', 'Hamster', 1, 4, False))
-		addPlayer(Player('Mouse', 'Mouse', 1, 6, False))
-		addPlayer(Player('wii03', 'wii03', 11, 115, False))
-		savePlayers(players)
+	def test_add_player(player):
+		players = load_players()
+		if player.id not in players:
+			players[player.id] = player.to_json_obj()
+		save_players(players)
 
+	player1 = Player(
+		id = "zgreee3",
+		name = "zgreee3",
+		level = 34,
+		max_hp = 655
+	)
 
-	testAddPlayer()
+	player2 = Player(
+		id = "zgreee",
+		name = "zgreee",
+		level = 34,
+		max_hp = 646
+	)
+
+	test_add_player(player1)
+	test_add_player(player2)

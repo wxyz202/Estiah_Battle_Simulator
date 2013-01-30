@@ -22,6 +22,43 @@
         "rune1": "Mace", 
         "rune2": "Lightning"
     }, 
+    "1074": {
+        "charm_terms": [
+            {
+                "charm_term": [
+                    {
+                        "effect": {
+                            "effect_type": "WardDestroy", 
+                            "params": {
+                                "defense": 21
+                            }
+                        }, 
+                        "target": "Enimy"
+                    }
+                ], 
+                "charm_term_type": "EffectTerm"
+            }, 
+            {
+                "charm_term": [
+                    {
+                        "effect": {
+                            "effect_type": "Magic", 
+                            "params": {
+                                "damage": 50, 
+                                "penetrating": 0
+                            }
+                        }, 
+                        "target": "Enimy"
+                    }
+                ], 
+                "charm_term_type": "EffectTerm"
+            }
+        ], 
+        "id": "1074", 
+        "name": "Challenger's Darkening Ring", 
+        "rune1": "Shadow", 
+        "rune2": "Null"
+    }, 
     "1077": {
         "charm_terms": [
             {
@@ -43,6 +80,29 @@
         "id": "1077", 
         "name": "Challenger's Aquatic Ring", 
         "rune1": "Frost", 
+        "rune2": "Null"
+    }, 
+    "1078": {
+        "charm_terms": [
+            {
+                "charm_term": [
+                    {
+                        "effect": {
+                            "effect_type": "Magic", 
+                            "params": {
+                                "damage": 54, 
+                                "penetrating": 0
+                            }
+                        }, 
+                        "target": "Enimy"
+                    }
+                ], 
+                "charm_term_type": "EffectTerm"
+            }
+        ], 
+        "id": "1078", 
+        "name": "Challenger's Pyric Ring", 
+        "rune1": "Fire", 
         "rune2": "Null"
     }, 
     "1108": {
@@ -180,6 +240,43 @@
         "rune1": "Frost", 
         "rune2": "Buff"
     }, 
+    "344": {
+        "charm_terms": [
+            {
+                "charm_term": [
+                    {
+                        "effect": {
+                            "effect_type": "ExtraAction", 
+                            "params": {
+                                "turn": 1
+                            }
+                        }, 
+                        "target": "Self"
+                    }
+                ], 
+                "charm_term_type": "EffectTerm"
+            }, 
+            {
+                "charm_term": [
+                    {
+                        "effect": {
+                            "effect_type": "Magic", 
+                            "params": {
+                                "damage": 6, 
+                                "penetrating": 25
+                            }
+                        }, 
+                        "target": "Enimy"
+                    }
+                ], 
+                "charm_term_type": "EffectTerm"
+            }
+        ], 
+        "id": "344", 
+        "name": "Lightning Reflexes", 
+        "rune1": "Lightning", 
+        "rune2": "Null"
+    }, 
     "610": {
         "charm_terms": [
             {
@@ -280,6 +377,131 @@
         "id": "668", 
         "name": "Blue Dragon Bone", 
         "rune1": "Tech", 
+        "rune2": "Null"
+    }, 
+    "940": {
+        "charm_terms": [
+            {
+                "charm_term": [
+                    {
+                        "effect": {
+                            "effect_type": "WardDestroy", 
+                            "params": {
+                                "defense": 21
+                            }
+                        }, 
+                        "target": "Enimy"
+                    }
+                ], 
+                "charm_term_type": "EffectTerm"
+            }, 
+            {
+                "charm_term": [
+                    {
+                        "effect": {
+                            "effect_type": "Magic", 
+                            "params": {
+                                "damage": 51, 
+                                "penetrating": 0
+                            }
+                        }, 
+                        "target": "Enimy"
+                    }
+                ], 
+                "charm_term_type": "EffectTerm"
+            }, 
+            {
+                "charm_term": [
+                    {
+                        "effect": {
+                            "effect_type": "LifeLose", 
+                            "params": {
+                                "life": 5
+                            }
+                        }, 
+                        "target": "Self"
+                    }
+                ], 
+                "charm_term_type": "EffectTerm"
+            }
+        ], 
+        "id": "940", 
+        "name": "Wizard Shadow Bone", 
+        "rune1": "Shadow", 
+        "rune2": "Null"
+    }, 
+    "942": {
+        "charm_terms": [
+            {
+                "charm_term": [
+                    {
+                        "effect": {
+                            "effect_type": "Magic", 
+                            "params": {
+                                "damage": 56, 
+                                "penetrating": 0
+                            }
+                        }, 
+                        "target": "Enimy"
+                    }
+                ], 
+                "charm_term_type": "EffectTerm"
+            }, 
+            {
+                "charm_term": [
+                    {
+                        "effect": {
+                            "effect_type": "LifeLose", 
+                            "params": {
+                                "life": 5
+                            }
+                        }, 
+                        "target": "Self"
+                    }
+                ], 
+                "charm_term_type": "EffectTerm"
+            }
+        ], 
+        "id": "942", 
+        "name": "Wizard Burning Toss", 
+        "rune1": "Fire", 
+        "rune2": "Null"
+    }, 
+    "947": {
+        "charm_terms": [
+            {
+                "charm_term": [
+                    {
+                        "effect": {
+                            "effect_type": "Magic", 
+                            "params": {
+                                "damage": 61, 
+                                "penetrating": 0
+                            }
+                        }, 
+                        "target": "Enimy"
+                    }
+                ], 
+                "charm_term_type": "EffectTerm"
+            }, 
+            {
+                "charm_term": [
+                    {
+                        "effect": {
+                            "effect_type": "LifeLose", 
+                            "params": {
+                                "life": 6
+                            }
+                        }, 
+                        "target": "Self"
+                    }
+                ], 
+                "charm_term_type": "EffectTerm"
+            }
+        ], 
+        "id": "947", 
+        "name": "Wizard Fire Orb", 
+        "rune1": "Fire", 
         "rune2": "Null"
     }, 
     "968": {

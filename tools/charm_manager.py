@@ -159,7 +159,74 @@ if __name__ == '__main__':
 		]
 	)
 
+	charm10 = Charm(
+		id = "940",
+		name = "Wizard Shadow Bone",
+		rune1 = RuneType.Shadow,
+		rune2 = RuneType.Null,
+		charm_terms = [
+			EffectTerm([(WardDestroy(21), TargetType.Enimy)]),
+			EffectTerm([(Magic(51, 0), TargetType.Enimy)]),
+			EffectTerm([(LifeLose(5), TargetType.Self)])
+		]
+	)
 
-	test_charm(charm9)
-	test_add_charm(charm9)
+	charm11 = Charm(
+		id = "1074",
+		name = "Challenger's Darkening Ring",
+		rune1 = RuneType.Shadow,
+		rune2 = RuneType.Null,
+		charm_terms = [
+			EffectTerm([(WardDestroy(21), TargetType.Enimy)]),
+			EffectTerm([(Magic(50, 0), TargetType.Enimy)])
+		]
+	)
+
+	charm12 = Charm(
+		id = "344",
+		name = "Lightning Reflexes",
+		rune1 = RuneType.Lightning,
+		rune2 = RuneType.Null,
+		charm_terms = [
+			EffectTerm([(ExtraAction(1), TargetType.Self)]),
+			EffectTerm([(Magic(6, 25), TargetType.Enimy)])
+		]
+	)
+
+	charm13 = Charm(
+		id = "947",
+		name = "Wizard Fire Orb",
+		rune1 = RuneType.Fire,
+		rune2 = RuneType.Null,
+		charm_terms = [
+			EffectTerm([(Magic(61, 0), TargetType.Enimy)]),
+			EffectTerm([(LifeLose(6), TargetType.Self)])
+		]
+	)
+
+	charm14 = Charm(
+		id = "1078",
+		name = "Challenger's Pyric Ring",
+		rune1 = RuneType.Fire,
+		rune2 = RuneType.Null,
+		charm_terms = [
+			EffectTerm([(Magic(54, 0), TargetType.Enimy)])
+		]
+	)
+
+	charm15 = Charm(
+		id = "942",
+		name = "Wizard Burning Toss",
+		rune1 = RuneType.Fire,
+		rune2 = RuneType.Null,
+		charm_terms = [
+			EffectTerm([(Magic(56, 0), TargetType.Enimy)]),
+			EffectTerm([(LifeLose(5), TargetType.Self)])
+		]
+	)
+
+
+
+	test_charm(charm15)
+	test_add_charm(charm15)
 

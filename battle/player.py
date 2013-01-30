@@ -34,7 +34,7 @@ class Player(object):
 		self.stun_turn = 0
 		self.extra_actions = 0
 
-	def import_gear(gear):
+	def import_gear(self, gear):
 		self.charm_list, self.max_spirit = gear.generate_charm_list()
 		self.spirit = self.max_spirit
 
@@ -124,17 +124,44 @@ class Player(object):
 	def set_armor(self, armor):
 		self.armor = armor
 
+	def gain_armor(self, armor, is_cumul):
+		if is_cumul:
+			self.armor += armor
+		else:
+			self.armor = max(self.armor, armor)
+
+	def lose_armor(self, armor):
+		self.armor = max(0, self.armor - armor)
+
 	def get_ward(self):
 		return self.ward
 
 	def set_ward(self, ward):
 		self.ward = ward
 
+	def gain_ward(self, ward, is_cumul):
+		if is_cumul:
+			self.ward += ward
+		else:
+			self.ward = max(self.ward, ward)
+
+	def lose_ward(self, ward):
+		self.ward = max(0, self.ward - ward)
+
 	def get_willpower(self):
 		return self.willpower
 
 	def set_willpower(self, willpower):
 		self.willpower = willpower
+
+	def gain_willpower(self, willpower, is_cumul):
+		if is_cumul:
+			self.willpower += willpower
+		else:
+			self.willpower = max(self.willpower, willpower)
+
+	def lose_willpower(self, willpower):
+		self.willpower = max(0, self.willpower - willpower)
 
 	def get_melee_NPB(self):
 		return self.melee_NPB
@@ -196,26 +223,43 @@ class Player(object):
 			self._use_spirit_NPB = False
 			self.spirit_NPB = 0
 
-	def take_melee_damage(self, melee):
-		self.reduce_hp(melee)
+	def take_melee_damage(self, melee, penetrating):
+		if melee > self.armor:
+			pierced = self.armor * penetrating / 100
+			absorbed = self.armor - pierced
+			damage = melee - self.armor + pierced
+		else:
+			pierced = melee * penetrating / 100
+			absorbed = melee - pierced
+			damage = pierced
+		self.reduce_hp(damage)
+		return damage
 
-	def take_magic_damage(self, magic):
-		self.reduce_hp(magic)
+	def take_magic_damage(self, magic, penetrating):
+		if magic > self.ward:
+			pierced = self.ward * penetrating / 100
+			absorbed = self.ward - pierced
+			damage = magic - self.ward + pierced
+		else:
+			pierced = magic * penetrating / 100
+			absorbed = magic - pierced
+			damage = pierced
+		self.reduce_hp(damage)
+		return damage
 
-	def take_spirit_damage(self, spirit):
-		self.reduce_spirit(spirit)
-		while spirit > 0:
-			spirit -= 1
+	def take_spirit_damage(self, spirit, penetrating):
+		if spirit > self.willpower:
+			pierced = self.willpower * penetrating / 100
+			absorbed = self.willpower - pierced
+			damage = spirit - self.willpower + pierced
+		else:
+			pierced = spirit * penetrating / 100
+			absorbed = spirit - pierced
+			damage = pierced
+		self.reduce_spirit(damage)
+		while damage > 0:
+			damage -= 1
 			self.charm_thrown_each_turn.append(self.charm_list.next())
-
-	def duel_melee_damage(self, melee):
-		pass #TODO: use to make statistics
-
-	def duel_magic_damage(self, melee):
-		pass #TODO: use to make statistics
-
-	def duel_spirit_damage(self, melee):
-		pass #TODO: use to make statistics
 
 	def get_hp(self):
 		return self.hp

@@ -33,7 +33,7 @@ class Envioronment(object):
 		return count == 0
 
 	def end(self):
-		return lose() or win()
+		return self.lose() or self.win()
 
 	def opposite_party(self, party):
 		if self.attackers == party:
@@ -67,16 +67,16 @@ class Envioronment(object):
 		while player.has_action():
 			player.play_charm(allies, enimies, self.turn_num)
 			self.focus_turn_decrease(enimy)
-			if self.end() || not player.is_alive():
+			if self.end() or not player.is_alive():
 				break
 			if player.has_extra_action():
 				player.trigger_effects_extra_action(allies, enimies)
 			else:
 				player.trigger_effects_normal(allies, enimies)
-			if self.end() || not player.is_alive():
+			if self.end() or not player.is_alive():
 				break
 			player.reduce_spirit(1)
-			if self.end() || not player.is_alive():
+			if self.end() or not player.is_alive():
 				break
 		player.turn_end()
 		return

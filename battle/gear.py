@@ -33,3 +33,13 @@ class Gear(object):
 		gear = obj['gear']
 		gear = [(load_charm_from_id(charm['charm_id']), charm['number']) for charm in gear]
 		return cls(id, gear)
+
+	@classmethod
+	def from_string(cls, s):
+		id = s.split("#")[0]
+		gear = []
+		for charms in s.split("#")[1].split():
+			num, charm_id = charms.split("x")
+			from common.datahandler import load_charm_from_id
+			gear.append((load_charm_from_id(charm_id), int(num)))
+		return cls(id, gear)
