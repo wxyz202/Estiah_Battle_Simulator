@@ -9,7 +9,7 @@ class BaseCharm(object):
 		state_stack = []
 		special_target = TargetType.Null
 		condition_satisfy = True
-		multiplier = None
+		multiplier = 1
 		for term in self.charm_terms:
 			if isinstance(term, EffectTerm):
 				if condition_satisfy:
@@ -36,11 +36,27 @@ class Charm(BaseCharm):
 		self.rune2 = rune2
 		self.charm_terms = charm_terms
 
+	def is_extra_action(self):
+		condition_cnt = 0
+		for term in self.charm_terms:
+			if isinstance(term, EffectTerm):
+				if condition_cnt != 0:
+					continue
+				if term.is_extra_action():
+					return True
+			elif isinstance(term, ChangeTargetTerm) or isinstance(term, ConditionTerm):
+				condition_cnt += 1
+			elif isinstance(term, EndTerm):
+				condition_cnt -= 1
+			else:
+				assert False
+		return False
+
 	def execute_effect(self, term, subject, target, allies, enimies, special_target, multiplier):
 		if self.is_extra_action():
-			term.execute(subject, target, allies, enimies, spcial_target, base_multiplier = multiplier, CPB_multiplier = constants.EXTRA_ACTION_CPB_MULTIPLIER)
+			term.execute(subject, target, allies, enimies, special_target, base_multiplier = multiplier, CPB_multiplier = constants.EXTRA_ACTION_CPB_MULTIPLIER)
 		else:
-			term.execute(subject, target, allies, enimies, spcial_target, base_multiplier = multiplier)
+			term.execute(subject, target, allies, enimies, special_target, base_multiplier = multiplier)
 
 	def to_json_obj(self):
 		obj = {

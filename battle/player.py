@@ -1,6 +1,7 @@
 import random
 import sys
 from common.enumtype import PlayerType
+import battlelog
 
 class Player(object):
 	def __init__(self, id, name, level, max_hp, is_no_dizzy=False):
@@ -10,7 +11,7 @@ class Player(object):
 		self.max_hp = max_hp
 		self.hp = self.max_hp
 		self.charm_used_each_turn = {}
-		self.charm_thrown_each_turn = {}
+		self.charm_thrown_each_turn = []
 		self.is_no_dizzy = is_no_dizzy
 		if is_no_dizzy:
 			self.max_dizzy_turn = sys.maxint
@@ -18,6 +19,9 @@ class Player(object):
 			self.max_dizzy_turn = 4
 		self.alive_state = PlayerType.Alive
 		self.reset()
+
+	def log_state(self):
+		battlelog.log("%s : %d/%d HP, %d armor, %d ward, %d willpower, %d/%d Charm(s) left\n" %(self.name, self.hp, self.max_hp, self.armor, self.ward, self.willpower, self.spirit, self.max_spirit))
 
 	def reset(self):
 		self.melee_CPB = 0
@@ -117,51 +121,61 @@ class Player(object):
 
 	def gain_extra_action(self, turn):
 		self.extra_actions += turn
+		battlelog.log("%s gains %d extra action\n" %(self.name, turn))
 
 	def get_armor(self):
 		return self.armor
 
-	def set_armor(self, armor):
-		self.armor = armor
-
 	def gain_armor(self, armor, is_cumul):
+		current_armor = self.armor
 		if is_cumul:
 			self.armor += armor
 		else:
 			self.armor = max(self.armor, armor)
+		if current_armor < self.armor:
+			battlelog.log("%s's armor raises to %d\n" %(self.name, self.armor))
+		else:
+			battlelog.log("%s's armor remains at %d\n" %(self.name, self.armor))
 
 	def lose_armor(self, armor):
 		self.armor = max(0, self.armor - armor)
+		battlelog.log("%s's armor drops to %d\n" %(self.name, self.armor))
 
 	def get_ward(self):
 		return self.ward
 
-	def set_ward(self, ward):
-		self.ward = ward
-
 	def gain_ward(self, ward, is_cumul):
+		current_ward = self.ward
 		if is_cumul:
 			self.ward += ward
 		else:
 			self.ward = max(self.ward, ward)
+		if current_ward < self.ward:
+			battlelog.log("%s's ward raises to %d\n" %(self.name, self.ward))
+		else:
+			battlelog.log("%s's ward remains at %d\n" %(self.name, self.ward))
 
 	def lose_ward(self, ward):
 		self.ward = max(0, self.ward - ward)
+		battlelog.log("%s's ward drops to %d\n" %(self.name, self.ward))
 
 	def get_willpower(self):
 		return self.willpower
 
-	def set_willpower(self, willpower):
-		self.willpower = willpower
-
 	def gain_willpower(self, willpower, is_cumul):
+		current_willpower = self.willpower
 		if is_cumul:
 			self.willpower += willpower
 		else:
 			self.willpower = max(self.willpower, willpower)
+		if current_willpower < self.willpower:
+			battlelog.log("%s's willpower raises to %d\n" %(self.name, self.willpower))
+		else:
+			battlelog.log("%s's willpower remains at %d\n" %(self.name, self.willpower))
 
 	def lose_willpower(self, willpower):
 		self.willpower = max(0, self.willpower - willpower)
+		battlelog.log("%s's willpower drops to %d\n" %(self.name, self.willpower))
 
 	def get_melee_NPB(self):
 		return self.melee_NPB
@@ -232,8 +246,14 @@ class Player(object):
 			pierced = melee * penetrating / 100
 			absorbed = melee - pierced
 			damage = pierced
+		if pierced > 0:
+			battlelog.log("%s takes %d melee damage (%d absorbed, %d pierced)\n" %(self.name, damage, absorbed, pierced))
+		elif absorbed > 0:
+			battlelog.log("%s takes %d melee damage (%d absorbed)\n" %(self.name, damage, absorbed))
+		else:
+			battlelog.log("%s takes %d melee damage\n" %(self.name, damage))
 		self.reduce_hp(damage)
-		return damage
+		return damage, absorbed, pierced
 
 	def take_magic_damage(self, magic, penetrating):
 		if magic > self.ward:
@@ -244,8 +264,14 @@ class Player(object):
 			pierced = magic * penetrating / 100
 			absorbed = magic - pierced
 			damage = pierced
+		if pierced > 0:
+			battlelog.log("%s takes %d magic damage (%d absorbed, %d pierced)\n" %(self.name, damage, absorbed, pierced))
+		elif absorbed > 0:
+			battlelog.log("%s takes %d magic damage (%d absorbed)\n" %(self.name, damage, absorbed))
+		else:
+			battlelog.log("%s takes %d magic damage\n" %(self.name, damage))
 		self.reduce_hp(damage)
-		return damage
+		return damage, absorbed, pierced
 
 	def take_spirit_damage(self, spirit, penetrating):
 		if spirit > self.willpower:
@@ -256,10 +282,17 @@ class Player(object):
 			pierced = spirit * penetrating / 100
 			absorbed = spirit - pierced
 			damage = pierced
+		if pierced > 0:
+			battlelog.log("%s takes %d spirit damage (%d absorbed, %d pierced)\n" %(self.name, damage, absorbed, pierced))
+		elif absorbed > 0:
+			battlelog.log("%s takes %d spirit damage (%d absorbed)\n" %(self.name, damage, absorbed))
+		else:
+			battlelog.log("%s takes %d spirit damage\n" %(self.name, damage))
 		self.reduce_spirit(damage)
 		while damage > 0:
 			damage -= 1
 			self.charm_thrown_each_turn.append(self.charm_list.next())
+		return damage, absorbed, pierced
 
 	def get_hp(self):
 		return self.hp
@@ -295,23 +328,27 @@ class Player(object):
 		if turn_num not in self.charm_used_each_turn:
 			self.charm_used_each_turn[turn_num] = []
 		self.charm_used_each_turn[turn_num].append(charm)
+		battlelog.log("%s uses [%s]\n" %(self.name, charm.name))
 		charm.execute(self, allies, enimies)
 
 	def trigger_effects_normal(self, allies, enimies):
-		for effect in self.long_time_effect_list:
-			effect.trigger_normal(self, allies, enimies)
+		for effect in self.long_time_effect_list[:]:
+			effect.trigger_normal(allies, enimies)
+		for effect in self.long_time_effect_list[:]:
 			if effect.end():
 				self.long_time_effect_list.remove(effect)
 
 	def trigger_effects_stun(self, allies, enimies):
-		for effect in self.long_time_effect_list:
-			effect.trigger_stun(self, allies, enimies)
+		for effect in self.long_time_effect_list[:]:
+			effect.trigger_stun(allies, enimies)
+		for effect in self.long_time_effect_list[:]:
 			if effect.end():
 				self.long_time_effect_list.remove(effect)
 
 	def trigger_effects_extra_action(self, allies, enimies):
-		for effect in self.long_time_effect_list:
-			effect.trigger_extra_action(self, allies, enimies)
+		for effect in self.long_time_effect_list[:]:
+			effect.trigger_extra_action(allies, enimies)
+		for effect in self.long_time_effect_list[:]:
 			if effect.end():
 				self.long_time_effect_list.remove(effect)
 

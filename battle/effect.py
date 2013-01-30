@@ -1,4 +1,5 @@
-from common.enumtype import EffectType
+import copy
+from common.enumtype import EffectType, EffectParamType
 import constants
 
 class Effect(object):
@@ -21,6 +22,9 @@ class Damage(Effect):
 		damage += booster
 		return damage, penetrating
 
+	def needed_param(self):
+		return EffectParamType.All_Multiplier
+
 	def to_json_obj(self):
 		obj = {
 			'effect_type': self.__class__.__name__,
@@ -41,7 +45,7 @@ class Melee(Damage):
 	def execute(self, subject, target, base_multiplier, CPB_multiplier, NPB_multiplier, total_booster_multiplier):
 		melee, penetrating = self.cal_damage(subject.get_melee_CPB(), subject.get_melee_NPB(), base_multiplier, CPB_multiplier, NPB_multiplier, total_booster_multiplier)
 		target.take_melee_damage(melee, penetrating)
-		if subject.NPB_multiplier != 0:
+		if NPB_multiplier != 0:
 			subject.use_melee_NPB()
 		return
 		
@@ -50,7 +54,7 @@ class MeleeDrain(Melee):
 		total_booster_multiplier *= constants.DRAIN_BOOSTER_MULTIPLIER
 		melee, penetrating = self.cal_damage(subject.get_melee_CPB(), subject.get_melee_NPB(), base_multiplier, CPB_multiplier, NPB_multiplier, total_booster_multiplier)
 		damage, absorbed, pierced = target.take_melee_damage(melee, penetrating)
-		if subject.NPB_multiplier != 0:
+		if NPB_multiplier != 0:
 			subject.use_melee_NPB()
 		subject.increase_hp(damage)
 		return
@@ -59,7 +63,7 @@ class Magic(Damage):
 	def execute(self, subject, target, base_multiplier, CPB_multiplier, NPB_multiplier, total_booster_multiplier):
 		magic, penetrating = self.cal_damage(subject.get_magic_CPB(), subject.get_magic_NPB(), base_multiplier, CPB_multiplier, NPB_multiplier, total_booster_multiplier)
 		target.take_magic_damage(magic, penetrating)
-		if subject.NPB_multiplier != 0:
+		if NPB_multiplier != 0:
 			subject.use_magic_NPB()
 		return
 
@@ -68,7 +72,7 @@ class MagicDrain(Magic):
 		total_booster_multiplier *= constants.DRAIN_BOOSTER_MULTIPLIER
 		magic, penetrating = self.cal_damage(subject.get_magic_CPB(), subject.get_magic_NPB(), base_multiplier, CPB_multiplier, NPB_multiplier, total_booster_multiplier)
 		damage, absorbed, pierced = target.take_melee_damage(melee, penetrating)
-		if subject.NPB_multiplier != 0:
+		if NPB_multiplier != 0:
 			subject.use_magic_NPB()
 		subject.increase_hp(damage)
 		return
@@ -86,12 +90,12 @@ class ShiftingDamage(Damage):
 		armor = target.get_armor()
 		magic, penetrating = self.cal_damage(subject.get_magic_CPB(), subject.get_magic_NPB(), base_multiplier, CPB_multiplier, NPB_multiplier, total_booster_multiplier)
 		ward = target.get_ward()
-		if cal_real_damage(melee, penetrating, armor) > cal_real_damage(magic, penetrating, ward):
-			if subject.NPB_multiplier != 0:
+		if ShiftingDamage.cal_real_damage(melee, penetrating, armor) > ShiftingDamage.cal_real_damage(magic, penetrating, ward):
+			if NPB_multiplier != 0:
 				subject.use_melee_NPB()
 			target.take_melee_damage(melee, penetrating)
 		else:
-			if subject.NPB_multiplier != 0:
+			if NPB_multiplier != 0:
 				subject.use_magic_NPB()
 			target.take_magic_damage(magic, penetrating)
 		return
@@ -109,7 +113,7 @@ class Spirit(Damage):
 	def execute(self, subject, target, base_multiplier, CPB_multiplier, NPB_multiplier, total_booster_multiplier):
 		spirit, penetrating = self.cal_damage(subject.get_spirit_CPB(), subject.get_spirit_NPB(), base_multiplier, CPB_multiplier, NPB_multiplier, total_booster_multiplier)
 		target.take_spirit_damage(spirit, penetrating)
-		if subject.NPB_multiplier != 0:
+		if NPB_multiplier != 0:
 			subject.use_spirit_NPB()
 		return
 
@@ -118,6 +122,9 @@ class Defense(Effect):
 	def __init__(self, defense, is_cumul):
 		self.defense = defense
 		self.is_cumul = is_cumul
+
+	def needed_param(self):
+		return EffectParamType.Base_Multiplier
 
 	def to_json_obj(self):
 		obj = {
@@ -178,6 +185,9 @@ class Projection(Effect):
 			target.take_magic_damage(damage, 0)
 		return
 
+	def needed_param(self):
+		return EffectParamType.Normal
+
 	def to_json_obj(self):
 		obj = {
 			'effect_type': self.__class__.__name__,
@@ -204,6 +214,9 @@ class Heal(Effect):
 		target.increase_hp(self.life * base_multiplier)
 		return
 
+	def needed_param(self):
+		return EffectParamType.Base_Multiplier
+
 	def to_json_obj(self):
 		obj = {
 			'effect_type': self.__class__.__name__,
@@ -226,6 +239,9 @@ class LifeLose(Effect):
 		target.reduce_hp(self.life * base_multiplier)
 		return
 
+	def needed_param(self):
+		return EffectParamType.Base_Multiplier
+
 	def to_json_obj(self):
 		obj = {
 			'effect_type': self.__class__.__name__,
@@ -244,6 +260,9 @@ class LifeLose(Effect):
 class DefenseDestroy(Effect):
 	def __init__(self, defense):
 		self.defense = defense
+
+	def needed_param(self):
+		return EffectParamType.Base_Multiplier
 
 	def to_json_obj(self):
 		obj = {
@@ -278,9 +297,12 @@ class ExtraAction(Effect):
 	def __init__(self, turn):
 		self.turn = turn
 
-	def execute(self, subject, target, base_multiplier):
-		target.gain_extra_action(self.turn * base_multiplier)
+	def execute(self, subject, target):
+		target.gain_extra_action(self.turn)
 		return
+
+	def needed_param(self):
+		return EffectParamType.Normal
 
 	def to_json_obj(self):
 		obj = {
@@ -312,6 +334,9 @@ class FocusProtect(Effect):
 				player.clear_being_target()
 		return
 
+	def needed_param(self):
+		return EffectParamType.All_Party
+
 	def to_json_obj(self):
 		obj = {
 			'effect_type': self.__class__.__name__,
@@ -336,6 +361,9 @@ class BreakFocus(Effect):
 		#TODO
 		return
 
+	def needed_param(self):
+		return EffectParamType.All_Party
+
 	def to_json_obj(self):
 		obj = {
 			'effect_type': self.__class__.__name__,
@@ -354,6 +382,9 @@ class Vanish(Effect):
 	def execute(self, subject, target):
 		target.clear_being_target()
 		return
+
+	def needed_param(self):
+		return EffectParamType.Normal
 
 	def to_json_obj(self):
 		obj = {
@@ -374,6 +405,9 @@ class Stun(Effect):
 		target.gain_stun(self.turn)
 		return
 
+	def needed_param(self):
+		return EffectParamType.Normal
+
 	def to_json_obj(self):
 		obj = {
 			'effect_type': self.__class__.__name__,
@@ -393,6 +427,9 @@ class Booster(Effect):
 	def __init__(self, boost):
 		self.boost = boost
 
+	def needed_param(self):
+		return EffectParamType.Base_Multiplier
+
 	def to_json_obj(self):
 		obj = {
 			'effect_type': self.__class__.__name__,
@@ -409,33 +446,33 @@ class Booster(Effect):
 
 
 class NextMelee(Booster):
-	def execute(self, subject, target):
-		target.gain_melee_NPB(self.boost)
+	def execute(self, subject, target, base_multiplier):
+		target.gain_melee_NPB(self.boost * base_multiplier)
 		return
 
 class NextMagic(Booster):
-	def execute(self, subject, target):
-		target.gain_magic_NPB(self.boost)
+	def execute(self, subject, target, base_multiplier):
+		target.gain_magic_NPB(self.boost * base_multiplier)
 		return
 
 class NextSpirit(Booster):
-	def execute(self, subject, target):
-		target.gain_spirit_NPB(self.boost)
+	def execute(self, subject, target, base_multiplier):
+		target.gain_spirit_NPB(self.boost * base_multiplier)
 		return
 
 class OngoingMelee(Booster):
-	def execute(self, subject, target):
-		target.gain_melee_CPB(self.boost)
+	def execute(self, subject, target, base_multiplier):
+		target.gain_melee_CPB(self.boost * base_multiplier)
 		return
 
 class OngoingMagic(Booster):
-	def execute(self, subject, target):
-		target.gain_magic_CPB(self.boost)
+	def execute(self, subject, target, base_multiplier):
+		target.gain_magic_CPB(self.boost * base_multiplier)
 		return
 
 class OngoingSpirit(Booster):
-	def execute(self, subject, target):
-		target.gain_spirit_CPB(self.boost)
+	def execute(self, subject, target, base_multiplier):
+		target.gain_spirit_CPB(self.boost * base_multiplier)
 		return
 
 
@@ -446,6 +483,9 @@ class Cleanse(Effect):
 	def execute(self, subject, target):
 		target.cleanse()
 		return
+
+	def needed_param(self):
+		return EffectParamType.Normal
 
 	def to_json_obj(self):
 		obj = {
@@ -466,6 +506,9 @@ class Purge(Effect):
 		target.purge()
 		return
 
+	def needed_param(self):
+		return EffectParamType.Normal
+
 	def to_json_obj(self):
 		obj = {
 			'effect_type': self.__class__.__name__,
@@ -484,6 +527,9 @@ class Normalize(Effect):
 	def execute(self, subject, target):
 		target.normalize()
 		return
+
+	def needed_param(self):
+		return EffectParamType.Normal
 
 	def to_json_obj(self):
 		obj = {
@@ -506,6 +552,9 @@ class Attach(Effect):
 		long_time_effect.subject = subject
 		long_time_effect.target = target
 		target.attach(long_time_effect)
+
+	def needed_param(self):
+		return EffectParamType.Normal
 
 	def to_json_obj(self):
 		obj = {
@@ -545,7 +594,7 @@ class LongTimeEffect(Effect):
 
 	def trigger_normal(self, allies, enimies):
 		self.turn -= 1
-		self.trigger(self, allies, enimies)
+		self.trigger(allies, enimies)
 
 	def to_json_obj(self):
 		obj = {
@@ -561,7 +610,7 @@ class LongTimeEffect(Effect):
 	@classmethod
 	def from_json_obj(cls, obj):
 		turn = obj['turn']
-		long_time_type = getattr(EffectType,obj['long_time_type'])
+		long_time_type = getattr(EffectType, obj['long_time_type'])
 		from charm import AttachCharm
 		attach_charm = AttachCharm.from_json_obj(obj['attach_charm'])
 		return cls(turn, long_time_type, attach_charm)
@@ -579,23 +628,23 @@ class Bane(LongTimeEffect):
 		pass
 
 	def trigger_extra_action(self, allies, enimies):
-		if self.long_time_effect == EffectType.AttachmentAfter:
+		if self.long_time_type == EffectType.AttachmentAfter:
 			self.turn -= 1
-		self.trigger(self, allies, enimies)
+		self.trigger(allies, enimies)
 
 class Curse(LongTimeEffect):
 	def trigger_stun(self, allies, enimies):
 		self.turn -= 1
-		self.trigger(self, allies, enimies)
+		self.trigger(allies, enimies)
 
 	def trigger_extra_action(self, allies, enimies):
 		self.turn -= 1
-		self.trigger(self, allies, enimies)
+		self.trigger(allies, enimies)
 
 class Summon(LongTimeEffect):
 	def trigger_stun(self, allies, enimies):
 		self.turn -= 1
-		self.trigger(self, allies, enimies)
+		self.trigger(allies, enimies)
 
 	def trigger_extra_action(self, allies, enimies):
 		pass

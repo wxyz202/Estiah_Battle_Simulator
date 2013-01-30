@@ -55,6 +55,13 @@ EffectType = BaseEnumType("""
 	AttachmentDuring
 """)
 
+EffectParamType = BaseEnumType("""
+	All_Multiplier
+	Base_Multiplier
+	All_Party
+	Normal
+""")
+
 PlayerType = BaseEnumType("""
 	Random
 	Alive

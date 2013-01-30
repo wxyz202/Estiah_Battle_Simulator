@@ -1,6 +1,7 @@
 from battle.envioronment import Envioronment
 from common.datahandler import *
 from common.enumtype import EnvioronmentType
+import battlelog
 
 if __name__ == '__main__':
 	attacker = load_player_from_id("zgreee")
@@ -11,4 +12,4 @@ if __name__ == '__main__':
 	defenders = [defender]
 	env = Envioronment(attackers, defenders)
 	result = env.start()
-	print EnvioronmentType.reverse(result)
+	battlelog.log(EnvioronmentType.reverse(result))

@@ -1,5 +1,6 @@
 import random
 from common.enumtype import PlayerType, EnvioronmentType
+import battlelog
 
 class Envioronment(object):
 	def __init__(self, attackers, defenders, begin_party=PlayerType.Attacker, begin_player_index=0):
@@ -17,6 +18,15 @@ class Envioronment(object):
 			self.action_party = self.defenders
 		self.action_player = self.action_party[begin_player_index]
 		self.turn_num = 0
+
+	def log_state(self):
+		battlelog.log("** Battle status **\n")
+		for player in self.attackers:
+			player.log_state()
+		battlelog.log("------\n")
+		for player in self.defenders:
+			player.log_state()
+		battlelog.log("\n")
 
 	def win(self):
 		count = 0
@@ -66,7 +76,7 @@ class Envioronment(object):
 		player.turn_begin()
 		while player.has_action():
 			player.play_charm(allies, enimies, self.turn_num)
-			self.focus_turn_decrease(enimy)
+			self.focus_turn_decrease(enimies)
 			if self.end() or not player.is_alive():
 				break
 			if player.has_extra_action():
@@ -79,9 +89,11 @@ class Envioronment(object):
 			if self.end() or not player.is_alive():
 				break
 		player.turn_end()
+		self.log_state()
 		return
 
 	def start(self):
+		self.log_state()
 		while not self.end():
 			self.play_turn()
 			self.next_player()

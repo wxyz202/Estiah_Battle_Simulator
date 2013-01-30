@@ -1,5 +1,6 @@
+import random
 import targeting
-from common.enumtype import TargetType, CharmTermType
+from common.enumtype import TargetType, CharmTermType, EffectParamType
 import constants
 
 class CharmTerm(object):
@@ -44,20 +45,28 @@ class EffectTerm(CharmTerm):
 			total_booster_multiplier *= (constants.AOE_BOOSTER_MULTIPLIER) / len(target_list)
 		else:
 			total_booster_multiplier *= 1
-		from effect import *
 		for target in target_list:
-			if isinstance(effect, Damage):
+			effect_param_type = effect.needed_param()
+			if effect_param_type == EffectParamType.All_Multiplier:
 				effect.execute(subject, target, base_multiplier, CPB_multiplier, NPB_multiplier, total_booster_multiplier)
-			elif isinstance(effect, FocusProtect) or isinstance(effect, BreakFocus):
+			elif effect_param_type == EffectParamType.Base_Multiplier:
+				effect.execute(subject, target, base_multiplier)
+			elif effect_param_type == EffectParamType.All_Party:
 				effect.execute(subject, target, allies, enimies)
-			elif isinstance(effect, Projection):
+			elif effect_param_type == EffectParamType.Normal:
 				effect.execute(subject, target)
 			else:
-				effect.execute(subject, target, base_multiplier)
+				assert False
 		subject.check_melee_NPB()
 		subject.check_magic_NPB()
 		subject.check_spirit_NPB()
-				
+
+	def is_extra_action(self):
+		if len(self.effect_target_list) != 1:
+			return False
+		effect, target = self.effect_target_list[0]
+		from effect import ExtraAction
+		return isinstance(effect, ExtraAction)
 
 	def to_json_obj(self):
 		obj = {'charm_term_type': CharmTermType.reverse(CharmTermType.EffectTerm)}

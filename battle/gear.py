@@ -13,7 +13,7 @@ class Gear(object):
 		def gen(gear):
 			charm_list = []
 			for (charm, num) in gear:
-				charm_list.extends([copy.deepcopy(charm) for i in xrange(num)])
+				charm_list.extend([copy.deepcopy(charm) for i in xrange(num)])
 			random.shuffle(charm_list)
 			for charm in charm_list:
 				yield charm
