@@ -169,11 +169,10 @@
                                                     ], 
                                                     "charm_term_type": "EffectTerm"
                                                 }
-                                            ], 
-                                            "id": "1221 Curse", 
-                                            "name": "Superior Fire Oil - Curse"
+                                            ]
                                         }, 
                                         "long_time_type": "AttachmentDuring", 
+                                        "name": "Consume", 
                                         "turn": 6
                                     }
                                 }
@@ -547,11 +546,10 @@
                                                     ], 
                                                     "charm_term_type": "EffectTerm"
                                                 }
-                                            ], 
-                                            "id": "968 Bane", 
-                                            "name": "Shaman Inner Flames - Bane"
+                                            ]
                                         }, 
                                         "long_time_type": "AttachmentDuring", 
+                                        "name": "Burn", 
                                         "turn": 5
                                     }
                                 }
@@ -611,11 +609,10 @@
                                                     ], 
                                                     "charm_term_type": "EffectTerm"
                                                 }
-                                            ], 
-                                            "id": "973 Bane", 
-                                            "name": "Shaman Voltage - Bane"
+                                            ]
                                         }, 
                                         "long_time_type": "AttachmentDuring", 
+                                        "name": "Burn", 
                                         "turn": 5
                                     }
                                 }

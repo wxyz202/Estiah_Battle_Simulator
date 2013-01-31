@@ -1,6 +1,7 @@
 import copy
 from common.enumtype import EffectType, EffectParamType
 import constants
+import battlelog
 
 class Effect(object):
 	@staticmethod
@@ -211,7 +212,7 @@ class Heal(Effect):
 		self.life = life
 
 	def execute(self, subject, target, base_multiplier):
-		target.increase_hp(self.life * base_multiplier)
+		target.heal(self.life * base_multiplier)
 		return
 
 	def needed_param(self):
@@ -236,7 +237,7 @@ class LifeLose(Effect):
 		self.life = life
 
 	def execute(self, subject, target, base_multiplier):
-		target.reduce_hp(self.life * base_multiplier)
+		target.life_lose(self.life * base_multiplier)
 		return
 
 	def needed_param(self):
@@ -571,7 +572,8 @@ class Attach(Effect):
 		return cls(long_time_effect)
 
 class LongTimeEffect(Effect):
-	def __init__(self, turn, long_time_type, attach_charm):
+	def __init__(self, name, turn, long_time_type, attach_charm):
+		self.name = name
 		self.turn = turn
 		self.long_time_type = long_time_type
 		self.attach_charm = attach_charm
@@ -600,6 +602,7 @@ class LongTimeEffect(Effect):
 		obj = {
 			'effect_type': self.__class__.__name__,
 			'params': {
+				'name': self.name,
 				'turn': self.turn,
 				'long_time_type': EffectType.reverse(self.long_time_type),
 				'attach_charm': self.attach_charm.to_json_obj()
@@ -609,11 +612,12 @@ class LongTimeEffect(Effect):
 
 	@classmethod
 	def from_json_obj(cls, obj):
+		name = obj['name']
 		turn = obj['turn']
 		long_time_type = getattr(EffectType, obj['long_time_type'])
 		from charm import AttachCharm
 		attach_charm = AttachCharm.from_json_obj(obj['attach_charm'])
-		return cls(turn, long_time_type, attach_charm)
+		return cls(name, turn, long_time_type, attach_charm)
 
 class Aura(LongTimeEffect):
 	def trigger_stun(self, allies, enimies):
@@ -622,6 +626,12 @@ class Aura(LongTimeEffect):
 
 	def trigger_extra_action(self, allies, enimies):
 		pass
+
+	def attach_log(self, player_name):
+		battlelog.log("%s gains %s\n" %(player_name, self.name))
+
+	def trigger_log(self):
+		battlelog.log("%s takes effect, " %(self.name))
 
 class Bane(LongTimeEffect):
 	def trigger_stun(self, allies, enimies):
@@ -632,6 +642,12 @@ class Bane(LongTimeEffect):
 			self.turn -= 1
 		self.trigger(allies, enimies)
 
+	def attach_log(self, player_name):
+		battlelog.log("%s is afflicted by %s\n" %(player_name, self.name))
+
+	def trigger_log(self):
+		battlelog.log("Because of %s, " %(self.name))
+
 class Curse(LongTimeEffect):
 	def trigger_stun(self, allies, enimies):
 		self.turn -= 1
@@ -641,6 +657,12 @@ class Curse(LongTimeEffect):
 		self.turn -= 1
 		self.trigger(allies, enimies)
 
+	def attach_log(self, player_name):
+		battlelog.log("%s is affected by %s\n" %(player_name, self.name))
+
+	def trigger_log(self):
+		battlelog.log("%s takes effect, " %(self.name))
+
 class Summon(LongTimeEffect):
 	def trigger_stun(self, allies, enimies):
 		self.turn -= 1
@@ -648,3 +670,9 @@ class Summon(LongTimeEffect):
 
 	def trigger_extra_action(self, allies, enimies):
 		pass
+
+	def attach_log(self, player_name):
+		battlelog.log("%s summons a %s\n" %(player_name, self.name))
+
+	def trigger_log(self):
+		battlelog.log("%s attacks, " %(self.name))

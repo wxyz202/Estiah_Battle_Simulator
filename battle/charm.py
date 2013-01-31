@@ -82,20 +82,17 @@ class Charm(BaseCharm):
 		return cls(id, name, rune1, rune2, charm_terms)
 
 class AttachCharm(BaseCharm):
-	def __init__(self, id, name, charm_terms):
-		self.id = id
-		self.name = name
+	def __init__(self, charm_terms):
 		self.charm_terms = charm_terms
 
 	def execute_effect(self, term, subject, target, allies, enimies, special_target, multiplier):
 		if special_target == TargetType.Null and self.source.is_affect_attach_target():
 			target = self.source.target
+		self.source.trigger_log()
 		term.execute(subject, target, allies, enimies, special_target, base_multiplier = multiplier, CPB_multiplier = 0, NPB_multiplier = 0, total_booster_multiplier = 0)
 
 	def to_json_obj(self):
 		obj = {
-			'id': self.id,
-			'name': self.name,
 			'charm_terms': []
 		}
 		for term in self.charm_terms:
@@ -104,10 +101,8 @@ class AttachCharm(BaseCharm):
 
 	@classmethod
 	def from_json_obj(cls, obj):
-		id = obj['id']
-		name = obj['name']
 		charm_terms = []
 		for term in obj['charm_terms']:
 			charm_terms.append(CharmTerm.from_json_obj(term))
-		return cls(id, name, charm_terms)
+		return cls(charm_terms)
 

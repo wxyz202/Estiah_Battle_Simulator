@@ -21,7 +21,7 @@ class Player(object):
 		self.reset()
 
 	def log_state(self):
-		battlelog.log("%s : %d/%d HP, %d armor, %d ward, %d willpower, %d/%d Charm(s) left\n" %(self.name, self.hp, self.max_hp, self.armor, self.ward, self.willpower, self.spirit, self.max_spirit))
+		battlelog.log("%s : %d/%d HP, %d armor, %d ward, %d willpower, %d/%d Charm(s) left, Melee CPB/Next: %d/%d, Magic CPB/Next: %d/%d, Spirit CPB/Next: %d/%d\n" %(self.name, self.hp, self.max_hp, self.armor, self.ward, self.willpower, self.spirit, self.max_spirit, self.melee_CPB, self.melee_NPB, self.magic_CPB, self.magic_NPB, self.spirit_CPB, self.spirit_NPB))
 
 	def reset(self):
 		self.melee_CPB = 0
@@ -43,7 +43,12 @@ class Player(object):
 		self.spirit = self.max_spirit
 
 	def cleanse(self):
-		self.long_time_effect_list = [effect for effect in self.long_time_effect_list if not isinstance(effect, Bane)]
+		battlelog.log("%s is cleansed\n" %(self.name))
+		from effect import Bane
+		for long_time_effect in self.long_time_effect_list[:]:
+			if isinstance(long_time_effect, Bane):
+				battlelog.log("%s disappears\n" %(long_time_effect.attach_charm.name))
+				self.long_time_effect_list.remove(long_time_effect)
 		self.melee_CPB = max(0, self.melee_CPB)
 		self.melee_NPB = max(0, self.melee_NPB)
 		self.magic_CPB = max(0, self.magic_CPB)
@@ -53,7 +58,12 @@ class Player(object):
 		return
 
 	def purge(self):
-		self.long_time_effect_list = [effect for effect in self.long_time_effect_list if not isinstance(effect, Aura)]
+		battlelog.log("%s is purged\n" %(self.name))
+		from effect import Aura
+		for long_time_effect in self.long_time_effect_list[:]:
+			if isinstance(long_time_effect, Aura):
+				battlelog.log("%s disappears\n" %(long_time_effect.attach_charm.name))
+				self.long_time_effect_list.remove(long_time_effect)
 		self.melee_CPB = min(0, self.melee_CPB)
 		self.melee_NPB = min(0, self.melee_NPB)
 		self.magic_CPB = min(0, self.magic_CPB)
@@ -63,6 +73,7 @@ class Player(object):
 		return
 
 	def normalize(self):
+		battlelog.log("%s is normalized\n" %(self.name))
 		self.melee_CPB = 0
 		self.melee_NPB = 0
 		self.magic_CPB = 0
@@ -72,10 +83,16 @@ class Player(object):
 		return
 
 	def die(self):
+		battlelog.log("\n%s is defeated.\n" %(self.name))
 		self.alive_state = PlayerType.Dead
 		self.reset()
 
+	def check_dead(self):
+		if self.hp <= 0:
+			self.die()
+
 	def out_of_spirit(self):
+		battlelog.log("\n%s collapses of exhaustion.\n" %(self.name))
 		self.alive_state = PlayerType.Out_of_Spirit
 		self.reset()
 
@@ -99,6 +116,7 @@ class Player(object):
 		return self.stun_turn > 0
 
 	def gain_stun(self, turn):
+		battlelog.log("%s is delayed for %d turn\n" %(self.name, turn))
 		self.stun_turn = max(self.stun_turn, turn)
 
 	def being_target(self):
@@ -197,21 +215,27 @@ class Player(object):
 
 	def gain_melee_NPB(self, boost):
 		self.melee_NPB += boost
+		battlelog.log("%s's next melee attack is increase by up to %d\n" %(self.name, boost))
 
 	def gain_magic_NPB(self, boost):
 		self.magic_NPB += boost
+		battlelog.log("%s's next magic attack is increase by up to %d\n" %(self.name, boost))
 
 	def gain_spirit_NPB(self, boost):
 		self.spirit_NPB += boost
+		battlelog.log("%s's next spirit attack is increase by up to %d\n" %(self.name, boost))
 
 	def gain_melee_CPB(self, boost):
 		self.melee_CPB += boost
+		battlelog.log("%s's ongoing melee attack is increase by up to %d\n" %(self.name, boost))
 
 	def gain_magic_CPB(self, boost):
 		self.magic_CPB += boost
+		battlelog.log("%s's ongoing magic attack is increase by up to %d\n" %(self.name, boost))
 
 	def gain_spirit_CPB(self, boost):
 		self.spirit_CPB += boost
+		battlelog.log("%s's ongoing spirit attack is increase by up to %d\n" %(self.name, boost))
 
 	def use_melee_NPB(self):
 		self._use_melee_NPB = True
@@ -297,12 +321,19 @@ class Player(object):
 	def get_hp(self):
 		return self.hp
 
+	def life_lose(self, hp):
+		battlelog.log("%s lose %d life\n" %(self.name, hp))
+		self.reduce_hp(hp)
+
 	def reduce_hp(self, hp):
 		if self.hp > hp:
 			self.hp -= hp
 		else:
 			self.hp = 0
-			self.die()
+
+	def heal(self, hp):
+		battlelog.log("%s heals %d damage\n" %(self.name, hp))
+		self.increase_hp(hp)
 
 	def increase_hp(self, hp):
 		self.hp = max(self.hp+hp, self.max_hp)
@@ -312,14 +343,15 @@ class Player(object):
 			self.spirit -= spirit
 		else:
 			self.spirit = 0
-		self.check_out_of_spirit()
 
 	def play_stun(self, turn_num):
 		self.stun_turn -= 1
+		battlelog.log("%s is stunned\n" %(self.name))
 		if turn_num not in self.charm_used_each_turn:
 			self.charm_used_each_turn[turn_num] = []
 
 	def attach(self, long_time_effect):
+		long_time_effect.attach_log(self.name)
 		self.long_time_effect_list.append(long_time_effect)
 
 	def play_charm(self, allies, enimies, turn_num):

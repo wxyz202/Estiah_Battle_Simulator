@@ -54,11 +54,10 @@ if __name__ == '__main__':
 			EffectTerm([(Magic(25, 20), TargetType.Enimy)]),
 			EffectTerm([(
 				Attach(Bane(
+					name = "Burn",
 					turn = 5,
 					long_time_type = EffectType.AttachmentDuring,
 					attach_charm = AttachCharm(
-						id = '968 Bane',
-						name = 'Shaman Inner Flames - Bane',
 						charm_terms = [
 							EffectTerm([(Magic(7,40), TargetType.Enimy)])
 						]
@@ -78,11 +77,10 @@ if __name__ == '__main__':
 			EffectTerm([(Magic(28, 20), TargetType.Enimy)]),
 			EffectTerm([(
 				Attach(Bane(
+					name = "Burn",
 					turn = 5,
 					long_time_type = EffectType.AttachmentDuring,
 					attach_charm = AttachCharm(
-						id = '973 Bane',
-						name = 'Shaman Voltage - Bane',
 						charm_terms = [
 							EffectTerm([(Magic(8,40), TargetType.Enimy)])
 						]
@@ -132,11 +130,10 @@ if __name__ == '__main__':
 			EffectTerm([(OngoingMagic(13), TargetType.Self)]),
 			EffectTerm([(
 				Attach(Curse(
+					name = "Consume",
 					turn = 6,
 					long_time_type = EffectType.AttachmentDuring,
 					attach_charm = AttachCharm(
-						id = '1221 Curse',
-						name = "Superior Fire Oil - Curse",
 						charm_terms = [
 							EffectTerm([(WardDestroy(10), TargetType.Self)])
 						]
@@ -227,6 +224,8 @@ if __name__ == '__main__':
 
 
 
-	test_charm(charm15)
-	test_add_charm(charm15)
+	for i in xrange(1, 16):
+		charm = globals()['charm%d' %(i)]
+		test_charm(charm)
+		test_add_charm(charm)
 
