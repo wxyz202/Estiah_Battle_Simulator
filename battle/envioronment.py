@@ -4,6 +4,13 @@ import battlelog
 
 class Envioronment(object):
 	def __init__(self, attackers, defenders, begin_party=PlayerType.Attacker, begin_player_index=0):
+		name_dict = {}
+		for player in attackers + defenders:
+			if player.name not in name_dict:
+				name_dict[player.name] = 1
+			else:
+				name_dict[player.name] += 1
+				player.name = player.name + ' ' + chr(ord('A') + name_dict[player.name] - 1)
 		if begin_party == PlayerType.Random:
 			begin_party = random.choice([PlayerType.Attacker, PlayerType.Defender])
 			if begin_party == PlayerType.Attacker:
@@ -108,9 +115,10 @@ class Envioronment(object):
 
 	def start(self):
 		self.log_state()
+		self.play_turn()
 		while not self.end():
-			self.play_turn()
 			self.next_player()
+			self.play_turn()
 		if self.lose():
 			return EnvioronmentType.Lose
 		else:

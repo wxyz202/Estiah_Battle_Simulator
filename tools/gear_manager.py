@@ -1,13 +1,13 @@
 from battle.gear import Gear
-from common.datahandler import *
+from common.datahandler import DataHandler
 
 if __name__ == '__main__':
 	
 	def test_add_gear(gear):
-		gears = load_gears()
+		gears = DataHandler.load_gears()
 		if gear.id not in gears:
 			gears[gear.id] = gear.to_json_obj()
-		save_gears(gears)
+		DataHandler.save_gears(gears)
 
 
 	gear1 = Gear.from_string("zgreee - auto magic#5x668 3x610 5x968 5x973 5x1057 5x1077 5x1108 5x1221 5x1496")

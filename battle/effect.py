@@ -194,8 +194,8 @@ class Projection(Effect):
 			'effect_type': self.__class__.__name__,
 			'params': {
 				'max_damage': self.max_damage,
-				'damage_type': EffectType.reverse(damage_type),
-				'defense_type': EffectType.reverse(defense_type)
+				'damage_type': EffectType.reverse(self.damage_type),
+				'defense_type': EffectType.reverse(self.defense_type)
 			}
 		}
 		return obj
@@ -549,7 +549,7 @@ class Attach(Effect):
 		self.long_time_effect = long_time_effect
 
 	def execute(self, subject, target):
-		long_time_effect = copy.deepcopy(self.long_time_effect)
+		long_time_effect = copy.copy(self.long_time_effect)
 		long_time_effect.subject = subject
 		long_time_effect.target = target
 		target.attach(long_time_effect)
@@ -572,12 +572,21 @@ class Attach(Effect):
 		return cls(long_time_effect)
 
 class LongTimeEffect(Effect):
-	def __init__(self, name, turn, long_time_type, attach_charm):
+	def __init__(self, name, description, turn, long_time_type, attach_charm):
 		self.name = name
+		self.description = description
 		self.turn = turn
 		self.long_time_type = long_time_type
 		self.attach_charm = attach_charm
 		self.attach_charm.source = self
+
+	def __copy__(self):
+		name = self.name
+		description = self.description
+		turn = self.turn
+		long_time_type = self.long_time_type
+		attach_charm = copy.copy(self.attach_charm)
+		return self.__class__(name, description, turn, long_time_type, attach_charm)
 
 	def end(self):
 		return self.turn == 0
@@ -603,6 +612,7 @@ class LongTimeEffect(Effect):
 			'effect_type': self.__class__.__name__,
 			'params': {
 				'name': self.name,
+				'description': self.description,
 				'turn': self.turn,
 				'long_time_type': EffectType.reverse(self.long_time_type),
 				'attach_charm': self.attach_charm.to_json_obj()
@@ -613,11 +623,12 @@ class LongTimeEffect(Effect):
 	@classmethod
 	def from_json_obj(cls, obj):
 		name = obj['name']
+		description = obj['description']
 		turn = obj['turn']
 		long_time_type = getattr(EffectType, obj['long_time_type'])
 		from charm import AttachCharm
 		attach_charm = AttachCharm.from_json_obj(obj['attach_charm'])
-		return cls(name, turn, long_time_type, attach_charm)
+		return cls(name, description, turn, long_time_type, attach_charm)
 
 class Aura(LongTimeEffect):
 	def trigger_stun(self, allies, enimies):
@@ -628,10 +639,10 @@ class Aura(LongTimeEffect):
 		pass
 
 	def attach_log(self, player_name):
-		battlelog.log("%s gains %s\n" %(player_name, self.name))
+		battlelog.log("%s gains %s\n" %(player_name, self.description))
 
 	def trigger_log(self):
-		battlelog.log("%s takes effect, " %(self.name))
+		battlelog.log("%s(%s, %d turns left) takes effect, " %(self.description, self.name, self.turn))
 
 class Bane(LongTimeEffect):
 	def trigger_stun(self, allies, enimies):
@@ -643,10 +654,10 @@ class Bane(LongTimeEffect):
 		self.trigger(allies, enimies)
 
 	def attach_log(self, player_name):
-		battlelog.log("%s is afflicted by %s\n" %(player_name, self.name))
+		battlelog.log("%s is afflicted by %s\n" %(player_name, self.description))
 
 	def trigger_log(self):
-		battlelog.log("Because of %s, " %(self.name))
+		battlelog.log("Because of %s(%s, %d turns left), " %(self.description, self.name, self.turn))
 
 class Curse(LongTimeEffect):
 	def trigger_stun(self, allies, enimies):
@@ -658,10 +669,10 @@ class Curse(LongTimeEffect):
 		self.trigger(allies, enimies)
 
 	def attach_log(self, player_name):
-		battlelog.log("%s is affected by %s\n" %(player_name, self.name))
+		battlelog.log("%s is affected by %s\n" %(player_name, self.description))
 
 	def trigger_log(self):
-		battlelog.log("%s takes effect, " %(self.name))
+		battlelog.log("%s(%s, %d turns left) takes effect, " %(self.description, self.name, self.turn))
 
 class Summon(LongTimeEffect):
 	def trigger_stun(self, allies, enimies):
@@ -672,7 +683,7 @@ class Summon(LongTimeEffect):
 		pass
 
 	def attach_log(self, player_name):
-		battlelog.log("%s summons a %s\n" %(player_name, self.name))
+		battlelog.log("%s summons a %s\n" %(player_name, self.description))
 
 	def trigger_log(self):
-		battlelog.log("%s attacks, " %(self.name))
+		battlelog.log("%s(%s, %d turns left) attacks, " %(self.description, self.name, self.turn))

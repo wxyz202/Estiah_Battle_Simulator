@@ -1,54 +1,72 @@
 import json
 
-def load_charms():
-	f = open('data/charms.json')
-	charms = json.load(f)
-	f.close()
-	return charms
+class DataHandler(object):
+	_charms = None
+	_gears = None
+	_players = None
 
-def save_charms(charms):
-	f = open('data/charms.json', 'w')
-	json.dump(charms, f, indent=4, sort_keys=True)
-	f.close()
-	return
+	@classmethod
+	def load_charms(cls):
+		if cls._charms is None:
+			f = open('data/charms.json')
+			cls._charms = json.load(f)
+			f.close()
+		return cls._charms
 
-def load_charm_from_id(charm_id):
-	charms = load_charms()
-	from battle.charm import Charm
-	return Charm.from_json_obj(charms[charm_id])
+	@classmethod
+	def save_charms(cls, charms):
+		cls._charms = charms
+		f = open('data/charms.json', 'w')
+		json.dump(charms, f, indent=4, sort_keys=True)
+		f.close()
+		return
 
+	@classmethod
+	def load_charm_from_id(cls, charm_id):
+		charms = cls.load_charms()
+		from battle.charm import Charm
+		return Charm.from_json_obj(charms[charm_id])
 
-def load_gears():
-	f = open('data/gears.json')
-	gears = json.load(f)
-	f.close()
-	return gears
+	@classmethod
+	def load_gears(cls):
+		if cls._gears is None:
+			f = open('data/gears.json')
+			cls._gears = json.load(f)
+			f.close()
+		return cls._gears
 
-def save_gears(gears):
-	f = open('data/gears.json', 'w')
-	json.dump(gears, f, indent=4, sort_keys=True)
-	f.close()
-	return
+	@classmethod
+	def save_gears(cls, gears):
+		cls._gears = gear
+		f = open('data/gears.json', 'w')
+		json.dump(gears, f, indent=4, sort_keys=True)
+		f.close()
+		return
 
-def load_gear_from_id(gear_id):
-	gears = load_gears()
-	from battle.gear import Gear
-	return Gear.from_json_obj(gears[gear_id])
+	@classmethod
+	def load_gear_from_id(cls, gear_id):
+		gears = cls.load_gears()
+		from battle.gear import Gear
+		return Gear.from_json_obj(gears[gear_id])
 
+	@classmethod
+	def load_players(cls):
+		if cls._players is None:
+			f = open('data/players.json')
+			cls._players = json.load(f)
+			f.close()
+		return cls._players
 
-def load_players():
-	f = open('data/players.json')
-	players = json.load(f)
-	f.close()
-	return players
+	@classmethod
+	def save_players(cls, players):
+		cls._players = players
+		f = open('data/players.json', 'w')
+		json.dump(players, f, indent=4, sort_keys=True)
+		f.close()
+		return
 
-def save_players(players):
-	f = open('data/players.json', 'w')
-	json.dump(players, f, indent=4, sort_keys=True)
-	f.close()
-	return
-
-def load_player_from_id(player_id):
-	players = load_players()
-	from battle.player import Player
-	return Player.from_json_obj(players[player_id])
+	@classmethod
+	def load_player_from_id(cls, player_id):
+		players = cls.load_players()
+		from battle.player import Player
+		return Player.from_json_obj(players[player_id])

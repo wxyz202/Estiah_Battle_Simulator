@@ -312,9 +312,9 @@ class Player(object):
 			battlelog.log("%s takes %d spirit damage (%d absorbed)\n" %(self.name, damage, absorbed))
 		else:
 			battlelog.log("%s takes %d spirit damage\n" %(self.name, damage))
-		self.reduce_spirit(damage)
-		while damage > 0:
+		while damage > 0 and self.spirit > 0:
 			damage -= 1
+			self.spirit -= 1
 			self.charm_thrown_each_turn.append(self.charm_list.next())
 		return damage, absorbed, pierced
 
