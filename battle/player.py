@@ -266,10 +266,12 @@ class Player(object):
 			pierced = self.armor * penetrating / 100
 			absorbed = self.armor - pierced
 			damage = melee - self.armor + pierced
+			self.armor = 0
 		else:
 			pierced = melee * penetrating / 100
 			absorbed = melee - pierced
 			damage = pierced
+			self.armor -= melee
 		if pierced > 0:
 			battlelog.log("%s takes %d melee damage (%d absorbed, %d pierced)\n" %(self.name, damage, absorbed, pierced))
 		elif absorbed > 0:
@@ -284,10 +286,12 @@ class Player(object):
 			pierced = self.ward * penetrating / 100
 			absorbed = self.ward - pierced
 			damage = magic - self.ward + pierced
+			self.ward = 0
 		else:
 			pierced = magic * penetrating / 100
 			absorbed = magic - pierced
 			damage = pierced
+			self.ward -= magic
 		if pierced > 0:
 			battlelog.log("%s takes %d magic damage (%d absorbed, %d pierced)\n" %(self.name, damage, absorbed, pierced))
 		elif absorbed > 0:
@@ -302,10 +306,12 @@ class Player(object):
 			pierced = self.willpower * penetrating / 100
 			absorbed = self.willpower - pierced
 			damage = spirit - self.willpower + pierced
+			self.willpower = 0
 		else:
 			pierced = spirit * penetrating / 100
 			absorbed = spirit - pierced
 			damage = pierced
+			self.willpower -= spirit
 		if pierced > 0:
 			battlelog.log("%s takes %d spirit damage (%d absorbed, %d pierced)\n" %(self.name, damage, absorbed, pierced))
 		elif absorbed > 0:
